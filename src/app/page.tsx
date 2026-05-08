@@ -1,65 +1,93 @@
-import Image from "next/image";
+import { StatsCards } from "@/components/dashboard/StatsCards";
+import { FinancialIntelligence } from "@/components/dashboard/FinancialIntelligence";
+import { YieldForecast } from "@/components/dashboard/YieldForecast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Search, Filter, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { getDashboardStats } from "@/lib/data";
 
-export default function Home() {
+export default async function DashboardPage() {
+  const stats = await getDashboardStats();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="p-8 space-y-8 animate-in fade-in duration-700">
+      <div className="flex justify-between items-end">
+        <div>
+          <h2 className="text-3xl font-bold text-white tracking-tight">Overview Operasional</h2>
+          <p className="text-slate-400">Selamat datang kembali, Monitor kondisi lahan Anda secara real-time.</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+        <div className="flex gap-3">
+          <Button variant="outline" className="bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800">
+            <Filter className="w-4 h-4 mr-2" /> Filter
+          </Button>
+          <Button className="bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            <Plus className="w-4 h-4 mr-2" /> Tambah Proyek
+          </Button>
+        </div>
+      </div>
+
+      <StatsCards 
+        totalSpent={stats.totalSpent} 
+        activeSeasons={stats.activeSeasons} 
+      />
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <FinancialIntelligence />
+        <YieldForecast />
+      </div>
+
+      <Card className="bg-slate-900 border-slate-800 shadow-xl">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-xl font-bold text-white">Aktivitas Terakhir (Telegram Feed)</CardTitle>
+          </div>
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input 
+              type="text" 
+              placeholder="Cari aktivitas..." 
+              className="w-full bg-slate-950 border border-slate-800 rounded-md py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader className="border-slate-800">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="text-slate-400">Lokasi/Petak</TableHead>
+                <TableHead className="text-slate-400">Aktivitas</TableHead>
+                <TableHead className="text-slate-400">Petugas</TableHead>
+                <TableHead className="text-slate-400">Status</TableHead>
+                <TableHead className="text-slate-400 text-right">Waktu</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {stats.recentLogs.map((log) => (
+                <TableRow key={log.id} className="border-slate-800 hover:bg-slate-800/50 transition-colors">
+                  <TableCell className="font-medium text-slate-200">{log.petak}</TableCell>
+                  <TableCell className="text-slate-400">{log.activity}</TableCell>
+                  <TableCell className="text-slate-400">{log.user}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className={log.status === "Selesai" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-orange-500/10 text-orange-500 border-orange-500/20"}>
+                      {log.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-slate-500">{log.date}</TableCell>
+                </TableRow>
+              ))}
+              {stats.recentLogs.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10 text-slate-500">
+                    Belum ada aktivitas. Coba input dari Telegram!
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }
