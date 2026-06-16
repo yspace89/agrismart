@@ -36,7 +36,12 @@ const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 export default function FinancePage() {
   const [financials, setFinancials] = useState<any[]>([]);
   const [recentExpenses, setRecentExpenses] = useState<any[]>([]);
-  const [stats, setStats] = useState({ totalSpent: 0, totalBudget: 0 });
+  const [stats, setStats] = useState({ 
+    totalSpent: 0, 
+    totalBudget: 0, 
+    avgBurnRate: 0, 
+    avgDaysRemaining: 0 
+  });
 
   useEffect(() => {
     fetchFinanceData();
@@ -49,7 +54,18 @@ export default function FinancePage() {
       setFinancials(viewData);
       const totalS = viewData.reduce((acc, curr) => acc + curr.total_spent, 0);
       const totalB = viewData.reduce((acc, curr) => acc + curr.budget_total, 0);
-      setStats({ totalSpent: totalS, totalBudget: totalB });
+      
+      const activeProjects = viewData.filter(v => v.status === 'ongoing');
+      const avgBurn = activeProjects.length > 0 
+        ? activeProjects.reduce((acc, curr) => acc + (curr.daily_burn_rate || 0), 0) / activeProjects.length 
+        : 0;
+      
+      const validDaysRemaining = activeProjects.filter(v => v.estimated_days_remaining !== null);
+      const avgDays = validDaysRemaining.length > 0
+        ? validDaysRemaining.reduce((acc, curr) => acc + curr.estimated_days_remaining, 0) / validDaysRemaining.length
+        : 0;
+
+      setStats({ totalSpent: totalS, totalBudget: totalB, avgBurnRate: avgBurn, avgDaysRemaining: Math.round(avgDays) });
     }
 
     // 2. Fetch Recent Transactions
@@ -120,7 +136,7 @@ export default function FinancePage() {
             <div className="mt-4">
               <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">Sisa Budget</p>
               <h3 className="text-2xl font-bold text-white mt-1">Rp {(stats.totalBudget - stats.totalSpent).toLocaleString('id-ID')}</h3>
-              <p className="text-xs text-slate-600 mt-1">Estimasi sisa operasional 45 hari</p>
+              <p className="text-xs text-slate-600 mt-1">Estimasi sisa operasional {stats.avgDaysRemaining > 0 ? stats.avgDaysRemaining : '?'} hari</p>
             </div>
             <div className="absolute bottom-0 left-0 w-full h-[2px] bg-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
           </CardContent>
@@ -135,8 +151,8 @@ export default function FinancePage() {
             </div>
             <div className="mt-4">
               <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">Burn Rate Harian</p>
-              <h3 className="text-2xl font-bold text-white mt-1">Rp 450.000</h3>
-              <p className="text-xs text-orange-500 mt-1 font-bold italic">Normal Range</p>
+              <h3 className="text-2xl font-bold text-white mt-1">Rp {Math.round(stats.avgBurnRate).toLocaleString('id-ID')}</h3>
+              <p className="text-xs text-slate-500 mt-1 italic">Rata-rata project aktif</p>
             </div>
             <div className="absolute bottom-0 left-0 w-full h-[2px] bg-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
           </CardContent>

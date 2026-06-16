@@ -6,17 +6,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getDashboardStats } from "@/lib/data";
+import { getDashboardStats, getYieldForecastData } from "@/lib/data";
 
 export default async function DashboardPage() {
-  const stats = await getDashboardStats();
+  const [stats, forecastData] = await Promise.all([
+    getDashboardStats(),
+    getYieldForecastData(),
+  ]);
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
       <div className="flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-bold text-white tracking-tight">Overview Operasional</h2>
-          <p className="text-slate-400">Selamat datang kembali, Monitor kondisi lahan Anda secara real-time.</p>
+          <p className="text-slate-400">
+            Selamat datang kembali. Monitor kondisi lahan Anda secara real-time.
+          </p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800">
@@ -28,26 +33,47 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <StatsCards 
-        totalSpent={stats.totalSpent} 
-        activeSeasons={stats.activeSeasons} 
+      {/* Stats Cards — semua dari database */}
+      <StatsCards
+        totalSpent={stats.totalSpent}
+        activeSeasons={stats.activeSeasons}
+        targetYield={stats.primarySeason?.targetYield ?? 0}
+        inventoryTotal={stats.inventory.totalItems}
+        inventoryCritical={stats.inventory.criticalCount}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <FinancialIntelligence />
-        <YieldForecast />
+        {/* Financial Intelligence — data nyata dari season aktif */}
+        <FinancialIntelligence
+          budget={stats.primarySeason?.budget ?? 0}
+          spent={stats.primarySeason?.spent ?? 0}
+          dailyBurnRate={stats.primarySeason?.dailyBurnRate ?? 0}
+          estimatedDaysRemaining={stats.primarySeason?.estimatedDaysRemaining ?? null}
+          harvestDate={stats.primarySeason?.harvestDate ?? null}
+          cropName={stats.primarySeason?.cropName}
+        />
+        {/* Yield Forecast — dari growth_logs nyata */}
+        <YieldForecast
+          chartData={forecastData.chartData as any}
+          probability={forecastData.probability}
+          targetYield={stats.primarySeason?.targetYield ?? 0}
+          actualYield={stats.primarySeason?.actualYield ?? 0}
+          cropName={stats.primarySeason?.cropName}
+        />
       </div>
 
+      {/* Activity Feed */}
       <Card className="bg-slate-900 border-slate-800 shadow-xl">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-xl font-bold text-white">Aktivitas Terakhir (Telegram Feed)</CardTitle>
+            <CardTitle className="text-xl font-bold text-white">Aktivitas Terakhir (Feed Lapangan)</CardTitle>
+            <p className="text-sm text-slate-500 mt-0.5">Laporan masuk dari Field Officer via Telegram</p>
           </div>
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-            <input 
-              type="text" 
-              placeholder="Cari aktivitas..." 
+            <input
+              type="text"
+              placeholder="Cari aktivitas..."
               className="w-full bg-slate-950 border border-slate-800 rounded-md py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
             />
           </div>
@@ -70,7 +96,14 @@ export default async function DashboardPage() {
                   <TableCell className="text-slate-400">{log.activity}</TableCell>
                   <TableCell className="text-slate-400">{log.user}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={log.status === "Selesai" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-orange-500/10 text-orange-500 border-orange-500/20"}>
+                    <Badge
+                      variant="outline"
+                      className={
+                        log.status === "Selesai"
+                          ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                          : "bg-orange-500/10 text-orange-500 border-orange-500/20"
+                      }
+                    >
                       {log.status}
                     </Badge>
                   </TableCell>
@@ -80,7 +113,7 @@ export default async function DashboardPage() {
               {stats.recentLogs.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-10 text-slate-500">
-                    Belum ada aktivitas. Coba input dari Telegram!
+                    Belum ada aktivitas. Minta Field Officer kirim laporan via Telegram!
                   </TableCell>
                 </TableRow>
               )}

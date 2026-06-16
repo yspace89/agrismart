@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Save, Trash2, MapPin, Target } from "lucide-react";
+import area from "@turf/area";
+import { polygon as turfPolygon } from "@turf/helpers";
 
 interface MapProps {
   mode?: "view" | "draw";
@@ -27,7 +29,11 @@ function Geoman({ mode, onPolygonCreated }: { mode: "view" | "draw", onPolygonCr
       map.pm.addControls({
         position: "topleft",
         drawMarker: false,
-        drawRectangle: true,
+        drawRectangle: false,
+        drawCircle: false,
+        drawCircleMarker: false,
+        drawPolyline: false,
+        drawText: false,
         drawPolygon: true,
         removalMode: true,
         editMode: true,
@@ -55,6 +61,23 @@ function Geoman({ mode, onPolygonCreated }: { mode: "view" | "draw", onPolygonCr
 
 export default function MapComponent({ mode = "view", existingPlots = [], onSave, onSelectPlot }: MapProps) {
   const [newPolygon, setNewPolygon] = useState<any>(null);
+  const [calculatedArea, setCalculatedArea] = useState<number>(0);
+
+  const handlePolygonCreated = (coords: any) => {
+    setNewPolygon(coords);
+    try {
+      // Leaflet returns coords as [{lat, lng}, ...], Turf expects [[lng, lat], ...]
+      // We must close the polygon ring for Turf by appending the first coord at the end
+      const turfCoords = coords[0].map((c: any) => [c.lng, c.lat]);
+      turfCoords.push(turfCoords[0]);
+      
+      const poly = turfPolygon([[...turfCoords]]);
+      const sqMeters = area(poly);
+      setCalculatedArea(Math.round(sqMeters));
+    } catch (err) {
+      console.error("Area calculation error", err);
+    }
+  };
 
   return (
     <div className="w-full h-full relative">
@@ -139,15 +162,15 @@ export default function MapComponent({ mode = "view", existingPlots = [], onSave
           </Polygon>
         ))}
 
-        <Geoman mode={mode} onPolygonCreated={setNewPolygon} />
+        <Geoman mode={mode} onPolygonCreated={handlePolygonCreated} />
       </MapContainer>
 
       {mode === "draw" && newPolygon && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] flex gap-2">
-          <Button onClick={() => { onSave?.(newPolygon); setNewPolygon(null); }} className="bg-emerald-600 shadow-2xl">
-            <Save className="w-4 h-4 mr-2" /> Konfirmasi Area
+          <Button onClick={() => { onSave?.({ coords: newPolygon, area: calculatedArea }); setNewPolygon(null); setCalculatedArea(0); }} className="bg-emerald-600 shadow-2xl">
+            <Save className="w-4 h-4 mr-2" /> Simpan Area ({calculatedArea.toLocaleString('id-ID')} m²)
           </Button>
-          <Button onClick={() => setNewPolygon(null)} variant="destructive" className="shadow-2xl">
+          <Button onClick={() => { setNewPolygon(null); setCalculatedArea(0); }} variant="destructive" className="shadow-2xl">
             <Trash2 className="w-4 h-4 mr-2" /> Batal
           </Button>
         </div>

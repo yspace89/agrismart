@@ -20,6 +20,8 @@ import { Progress } from "@/components/ui/progress";
 
 export default function InventoryPage() {
   const [items, setItems] = useState<any[]>([]);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [monthlySpend, setMonthlySpend] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,8 +29,28 @@ export default function InventoryPage() {
   }, []);
 
   async function fetchInventory() {
+    // 1. Fetch Inventory Items
     const { data } = await supabase.from("inventory").select("*").order("item_name");
     if (data) setItems(data);
+
+    // 2. Fetch Recent Inventory Usage/Purchases (from expenses)
+    const currentMonthStr = new Date().toISOString().slice(0, 7); // YYYY-MM
+    const { data: expData } = await supabase
+      .from("expenses")
+      .select("*, inventory(item_name)")
+      .not("inventory_id", "is", null)
+      .order("created_at", { ascending: false });
+
+    if (expData) {
+      setLogs(expData);
+      
+      // Calculate this month's inventory spend
+      const spend = expData
+        .filter(e => e.created_at.startsWith(currentMonthStr))
+        .reduce((acc, curr) => acc + Number(curr.amount), 0);
+      setMonthlySpend(spend);
+    }
+    
     setLoading(false);
   }
 
@@ -81,7 +103,7 @@ export default function InventoryPage() {
           <CardContent className="p-6">
             <p className="text-xs font-bold text-slate-500 uppercase">Belanja Bulan Ini</p>
             <div className="flex items-center justify-between mt-2">
-              <h3 className="text-2xl font-bold text-white">Rp 8.4M</h3>
+              <h3 className="text-2xl font-bold text-white">Rp {(monthlySpend / 1000000).toFixed(1)}M</h3>
               <div className="p-2 rounded-lg bg-blue-500/10">
                 <ShoppingCart className="w-5 h-5 text-blue-500" />
               </div>
@@ -93,8 +115,8 @@ export default function InventoryPage() {
           <CardContent className="p-6">
             <p className="text-xs font-bold text-slate-500 uppercase">Aktivitas Gudang</p>
             <div className="flex items-center justify-between mt-2">
-              <h3 className="text-2xl font-bold text-white">12</h3>
-              <p className="text-xs text-slate-500 italic">24 jam terakhir</p>
+              <h3 className="text-2xl font-bold text-white">{logs.length}</h3>
+              <p className="text-xs text-slate-500 italic">Transaksi Tercatat</p>
             </div>
           </CardContent>
         </Card>
@@ -178,20 +200,28 @@ export default function InventoryPage() {
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-slate-800 hover:bg-slate-800/50">
-                <td className="p-4 text-xs text-slate-400">9 Mei, 08:30</td>
-                <td className="p-4 text-xs"><Badge className="bg-orange-500/10 text-orange-500 border-orange-500/10">OUT</Badge></td>
-                <td className="p-4 text-xs font-bold text-white">Pupuk Urea</td>
-                <td className="p-4 text-xs text-white">2 Karung</td>
-                <td className="p-4 text-xs text-slate-400">Sudirman (Blok A-01)</td>
-              </tr>
-              <tr className="border-b border-slate-800 hover:bg-slate-800/50">
-                <td className="p-4 text-xs text-slate-400">8 Mei, 14:15</td>
-                <td className="p-4 text-xs"><Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/10">IN</Badge></td>
-                <td className="p-4 text-xs font-bold text-white">Bibit Jagung P35</td>
-                <td className="p-4 text-xs text-white">10 Pack</td>
-                <td className="p-4 text-xs text-slate-400">Supplier A</td>
-              </tr>
+              {logs.map(log => (
+                <tr key={log.id} className="border-b border-slate-800 hover:bg-slate-800/50">
+                  <td className="p-4 text-xs text-slate-400">
+                    {new Date(log.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </td>
+                  <td className="p-4 text-xs">
+                    {log.amount > 0 ? (
+                      <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/10">IN (Beli)</Badge>
+                    ) : (
+                      <Badge className="bg-orange-500/10 text-orange-500 border-orange-500/10">OUT (Pakai)</Badge>
+                    )}
+                  </td>
+                  <td className="p-4 text-xs font-bold text-white">{(log.inventory as any)?.item_name || 'Item'}</td>
+                  <td className="p-4 text-xs text-white">Rp {Math.abs(log.amount).toLocaleString('id-ID')}</td>
+                  <td className="p-4 text-xs text-slate-400">{log.submitted_by || 'Field Officer'}</td>
+                </tr>
+              ))}
+              {logs.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-slate-600 italic">Belum ada aktivitas gudang tercatat.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </CardContent>
