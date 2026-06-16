@@ -201,7 +201,7 @@ export default function LandsPage() {
       const perm = await Notification.requestPermission();
       if (perm === 'granted') {
         alert("✅ Notifikasi diaktifkan! Anda akan menerima pengingat jadwal kebun.");
-        new Notification("AgriSmart Urban Farming", { body: "Notifikasi jadwal sudah aktif!" });
+        new Notification("Agrinova Urban Farming", { body: "Notifikasi jadwal sudah aktif!" });
       } else {
         alert("❌ Izin notifikasi ditolak/diblokir oleh browser.");
       }

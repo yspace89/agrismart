@@ -21,8 +21,8 @@ export default async function LoginPage({
         <div className="p-3 bg-emerald-500/10 rounded-xl mb-4 border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
           <Leaf className="w-10 h-10 text-emerald-500" />
         </div>
-        <h1 className="text-3xl font-bold text-white tracking-tight">AgriSmart</h1>
-        <p className="text-slate-400 mt-2">Enterprise Farm Management System</p>
+        <h1 className="text-3xl font-bold text-white tracking-tight">Agrinova</h1>
+        <p className="text-slate-400 mt-2">Sign in to your account</p>
       </div>
 
       <Card className="w-full max-w-md bg-slate-900 border-slate-800 shadow-2xl z-10">
@@ -93,9 +93,9 @@ export default async function LoginPage({
         </CardContent>
       </Card>
       
-      <p className="mt-8 text-sm text-slate-500 z-10">
-        &copy; {new Date().getFullYear()} AgriSmart ERP. All rights reserved.
-      </p>
+      <div className="mt-auto pt-8 text-center text-sm text-slate-500">
+        &copy; {new Date().getFullYear()} Agrinova ERP. All rights reserved.
+      </div>
     </div>
   )
 }

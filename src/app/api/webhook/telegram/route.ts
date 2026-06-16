@@ -6,7 +6,7 @@ const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 
 // Menu bantuan yang akan ditampilkan saat /START atau BANTUAN
-const HELP_MESSAGE = `🌾 <b>AgriSmart Bot — Panduan Perintah</b>
+const HELP_MESSAGE = `🌾 <b>Agrinova Bot — Panduan Perintah</b>
 
 <b>📊 Laporan Keuangan:</b>
 • <code>BIAYA [Kategori] [Jumlah] [Keterangan]</code>

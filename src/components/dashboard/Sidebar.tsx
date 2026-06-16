@@ -78,7 +78,7 @@ export function Sidebar() {
   return (
     <div className="flex flex-col h-screen w-64 bg-slate-950 border-r border-slate-800 text-slate-300">
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-emerald-500 tracking-tighter">AgriSmart</h1>
+        <h1 className="text-2xl font-bold text-emerald-500 tracking-tighter">Agrinova</h1>
         <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">
           {mode === 'pro' ? "Industrial ERP" : "Urban Farming"}
         </p>

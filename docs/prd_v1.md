@@ -1,8 +1,8 @@
-# PRD: AgriSmart ERP v1.0
+# PRD: Agrinova ERP v1.0
 ## Predictive Financial & Yield Management System
 
 ## 1. Executive Summary
-AgriSmart adalah platform ERP agrikultur "Industrial-Grade" yang berfokus pada **Manajemen Keuangan Prediktif** dan **Forecasting Hasil Panen**. Sistem ini dirancang untuk menyelesaikan masalah ketidakpastian cashflow, kebocoran biaya (leakage), dan kurangnya data riil dari lapangan dengan mengintegrasikan data dari Telegram Bot, Sensor IoT, dan Dashboard Analytics Premium.
+Agrinova adalah platform ERP agrikultur "Industrial-Grade" yang berfokus pada **Manajemen Keuangan Prediktif** dan **Forecasting Hasil Panen**. Sistem ini dirancang untuk menyelesaikan masalah ketidakpastian cashflow, kebocoran biaya (leakage), dan kurangnya data riil dari lapangan dengan mengintegrasikan data dari Telegram Bot, Sensor IoT, dan Dashboard Analytics Premium.
 
 ---
 

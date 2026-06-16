@@ -6,9 +6,10 @@ import { Sidebar } from "@/components/dashboard/Sidebar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AgriSmart ERP | Predictive Agriculture",
-  description: "Industrial ERP for predictive agriculture and financial management",
+  title: "Agrinova ERP | Predictive Agriculture",
+  description: "Platform Manajemen Agrikultur Cerdas",
   manifest: "/manifest.json",
+  themeColor: "#0f172a",
 };
 
 import { UserModeProvider } from "@/contexts/UserModeContext";
