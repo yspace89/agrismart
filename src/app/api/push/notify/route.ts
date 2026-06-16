@@ -2,14 +2,13 @@ import { NextResponse } from 'next/server';
 import webpush from 'web-push';
 import { supabase } from '@/lib/supabase'; // Service role key if needed, or normal client
 
-webpush.setVapidDetails(
-  'mailto:your-email@example.com',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string,
-  process.env.VAPID_PRIVATE_KEY as string
-);
-
 export async function POST(req: Request) {
   try {
+    webpush.setVapidDetails(
+      'mailto:your-email@example.com',
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 'dummy_public_key',
+      process.env.VAPID_PRIVATE_KEY || 'dummy_private_key'
+    );
     // In production, you should authenticate this endpoint (e.g. secret key or admin check)
     // For now, it's open for demonstration
 
