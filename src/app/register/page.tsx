@@ -1,6 +1,7 @@
 import { register } from './actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, CheckCircle, KeyRound } from 'lucide-react'
 import Link from 'next/link'
@@ -52,22 +53,7 @@ export default async function RegisterPage({
               </div>
             )}
 
-            <div className="space-y-2.5">
-              <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="invite_code">
-                Kode Undangan
-              </label>
-              <div className="relative">
-                <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <Input
-                  id="invite_code"
-                  name="invite_code"
-                  type="text"
-                  placeholder="Masukkan kode admin"
-                  required
-                  className="bg-white/70 border-white/80 h-14 rounded-2xl px-5 pl-12 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
-                />
-              </div>
-            </div>
+
             
             <div className="space-y-2.5">
               <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="email">
@@ -87,10 +73,9 @@ export default async function RegisterPage({
               <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="password">
                 Password
               </label>
-              <Input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 placeholder="Minimal 6 karakter"
                 required
                 minLength={6}

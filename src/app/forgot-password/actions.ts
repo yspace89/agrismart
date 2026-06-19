@@ -17,8 +17,7 @@ export async function resetPassword(formData: FormData) {
 
   if (error) {
     console.error('[Forgot Password] error:', error.message)
-    // Jangan expose error spesifik untuk menghindari email enumeration
-    redirect('/forgot-password?error=' + encodeURIComponent('Terjadi kesalahan. Pastikan email yang dimasukkan benar.'))
+    redirect('/forgot-password?error=' + encodeURIComponent(error.message))
   }
 
   redirect('/forgot-password?message=' + encodeURIComponent('Tautan reset password telah dikirim ke email Anda.'))

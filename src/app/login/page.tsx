@@ -1,6 +1,7 @@
 import { login } from './actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
@@ -77,10 +78,9 @@ export default async function LoginPage({
                   Lupa Password?
                 </a>
               </div>
-              <Input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 placeholder="••••••••"
                 required
                 className="bg-white/70 border-white/80 h-14 rounded-2xl px-5 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"

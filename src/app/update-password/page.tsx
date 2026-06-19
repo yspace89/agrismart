@@ -2,6 +2,7 @@ import { updatePassword } from './actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { AlertCircle } from 'lucide-react'
 
 export default async function UpdatePasswordPage({
@@ -48,10 +49,9 @@ export default async function UpdatePasswordPage({
               <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="password">
                 Password Baru
               </label>
-              <Input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 placeholder="••••••••"
                 required
                 minLength={6}
@@ -63,10 +63,9 @@ export default async function UpdatePasswordPage({
               <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="confirm_password">
                 Konfirmasi Password
               </label>
-              <Input
+              <PasswordInput
                 id="confirm_password"
                 name="confirm_password"
-                type="password"
                 placeholder="••••••••"
                 required
                 minLength={6}
