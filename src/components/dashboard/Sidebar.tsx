@@ -26,14 +26,24 @@ export function Sidebar() {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
+    // Jangan daftarkan service worker di halaman auth untuk menghindari error redirect
+    if (pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname === '/update-password') {
+      return;
+    }
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').then((reg) => {
         reg.pushManager.getSubscription().then((sub) => {
           if (sub) setIsSubscribed(true);
+        }).catch(() => {
+          // Abaikan error minor pushManager
         });
+      }).catch((error) => {
+        // Abaikan pesan error SecurityError redirect Next.js
+        console.warn('[PWA] Service Worker registration skipped:', error.message);
       });
     }
-  }, []);
+  }, [pathname]);
 
   const subscribeToPush = async () => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
@@ -65,7 +75,7 @@ export function Sidebar() {
     }
   };
 
-  if (pathname === '/login' || pathname === '/register') {
+  if (pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname === '/update-password') {
     return null;
   }
 
