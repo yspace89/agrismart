@@ -58,8 +58,12 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect all routes except /login, /register, and /api/webhook/telegram
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register')
+  // Protect all routes except auth routes and webhooks
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || 
+                      request.nextUrl.pathname.startsWith('/register') ||
+                      request.nextUrl.pathname.startsWith('/forgot-password') ||
+                      request.nextUrl.pathname.startsWith('/update-password') ||
+                      request.nextUrl.pathname.startsWith('/auth/callback')
   const isWebhookRoute = request.nextUrl.pathname.startsWith('/api/webhook') || request.nextUrl.pathname.startsWith('/api/iot-simulate')
 
   if (!user && !isAuthRoute && !isWebhookRoute) {
