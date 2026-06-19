@@ -69,9 +69,14 @@ export default async function LoginPage({
             </div>
             
             <div className="space-y-2.5">
-              <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="password">
-                Password
-              </label>
+              <div className="flex items-center justify-between ml-1 mr-1">
+                <label className="text-sm font-bold text-slate-700" htmlFor="password">
+                  Password
+                </label>
+                <Link href="/forgot-password" className="text-xs font-bold text-[#2d6a4f] hover:text-[#1b4332] hover:underline transition-colors">
+                  Lupa Password?
+                </Link>
+              </div>
               <Input
                 id="password"
                 name="password"
