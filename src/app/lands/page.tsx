@@ -201,7 +201,7 @@ export default function LandsPage() {
       const perm = await Notification.requestPermission();
       if (perm === 'granted') {
         alert("✅ Notifikasi diaktifkan! Anda akan menerima pengingat jadwal kebun.");
-        new Notification("Agrinova Urban Farming", { body: "Notifikasi jadwal sudah aktif!" });
+        new Notification("Agritiva", { body: "Notifikasi jadwal sudah aktif!" });
       } else {
         alert("❌ Izin notifikasi ditolak/diblokir oleh browser.");
       }
@@ -230,19 +230,19 @@ export default function LandsPage() {
   const filteredCommodities = dbCommodities.filter(c => c.type === userMode || c.type === 'both');
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-700">
-      <div className="flex justify-between items-end">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-0">
         <div>
-          <h2 className="text-3xl font-bold text-white tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
             {userMode === 'pro' ? "Manajemen Lahan" : "Koleksi Tanaman"}
           </h2>
-          <p className="text-slate-400">
+          <p className="text-sm md:text-base text-slate-400 mt-1">
             {userMode === 'pro' 
               ? "Command Center: Monitoring, Assign Task & Control PIC." 
               : "Pantau dan catat perkembangan seluruh tanamanmu di sini."}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap w-full md:w-auto items-center gap-3">
           {userMode === 'garden' && (
             <Button variant="outline" className="border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800" onClick={requestNotifPermission}>
               <Bell className="w-4 h-4 mr-2" /> Aktifkan Notif
@@ -267,7 +267,7 @@ export default function LandsPage() {
       <div className={cn("grid gap-6", userMode === 'pro' ? "lg:grid-cols-3" : "grid-cols-1")}>
         
         {userMode === 'pro' && (
-          <Card className="lg:col-span-2 bg-slate-900 border-slate-800 shadow-2xl overflow-hidden min-h-[650px] flex flex-col relative">
+          <Card className="lg:col-span-2 bg-slate-900 border-slate-800 shadow-2xl overflow-hidden min-h-[400px] md:min-h-[650px] flex flex-col relative">
             <MapComponent 
               mode={mode === "draw" ? "draw" : "view"} 
               existingPlots={dbPlots}

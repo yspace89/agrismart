@@ -5,8 +5,12 @@ import { recordMaterialUsage } from "@/lib/actions";
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 
+// [VULN-02 FIX] Secret token untuk validasi bahwa request berasal dari Telegram
+// Ditetapkan saat register webhook: setWebhook?secret_token=TELEGRAM_WEBHOOK_SECRET
+const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
+
 // Menu bantuan yang akan ditampilkan saat /START atau BANTUAN
-const HELP_MESSAGE = `🌾 <b>Agrinova Bot — Panduan Perintah</b>
+const HELP_MESSAGE = `🌾 <b>Agritiva Bot — Panduan Perintah</b>
 
 <b>📊 Laporan Keuangan:</b>
 • <code>BIAYA [Kategori] [Jumlah] [Keterangan]</code>
@@ -29,6 +33,15 @@ Ketik <b>BANTUAN</b> untuk melihat panduan ini lagi.`;
 
 export async function POST(req: Request) {
   try {
+    // [VULN-02 FIX] Validasi secret token dari Telegram
+    // Telegram mengirim header ini jika webhook didaftarkan dengan secret_token
+    const incomingSecret = req.headers.get("x-telegram-bot-api-secret-token");
+    if (!WEBHOOK_SECRET || incomingSecret !== WEBHOOK_SECRET) {
+      console.warn("[Webhook] Unauthorized request — invalid or missing secret token");
+      // Selalu return 200 agar Telegram tidak retry, tapi jangan proses request
+      return NextResponse.json({ ok: true });
+    }
+
     const body = await req.json();
 
     const { message } = body;
@@ -78,7 +91,9 @@ export async function POST(req: Request) {
       });
 
       if (error) {
-        await sendTelegramMessage(chatId, "❌ Gagal simpan biaya: " + error.message);
+        // [VULN-05 FIX] Log error di server, jangan expose ke user
+        console.error("[Webhook BIAYA] DB Error:", error.message);
+        await sendTelegramMessage(chatId, "❌ Gagal menyimpan data biaya. Silakan coba lagi atau hubungi admin.");
       } else {
         await sendTelegramMessage(
           chatId,
@@ -135,7 +150,9 @@ export async function POST(req: Request) {
           `📍 Lokasi: ${land.name}`
         );
       } catch (e: any) {
-        await sendTelegramMessage(chatId, `❌ Error: ${e.message}`);
+        // [VULN-05 FIX] Log error detail di server, user dapat pesan generik
+        console.error("[Webhook PAKAI] Error:", e.message);
+        await sendTelegramMessage(chatId, `❌ Gagal mencatat pemakaian. Pastikan nama item sesuai dengan data gudang.`);
       }
       return NextResponse.json({ ok: true });
     }
@@ -148,7 +165,9 @@ export async function POST(req: Request) {
         .order("item_name");
 
       if (error) {
-        await sendTelegramMessage(chatId, "❌ Gagal ambil data stok: " + error.message);
+        // [VULN-05 FIX] Log di server, jangan expose error.message ke Telegram
+        console.error("[Webhook STOK] DB Error:", error.message);
+        await sendTelegramMessage(chatId, "❌ Gagal mengambil data stok. Coba lagi nanti.");
       } else if (!items || items.length === 0) {
         await sendTelegramMessage(chatId, "📦 Gudang kosong. Belum ada inventaris yang terdaftar.");
       } else {
@@ -164,7 +183,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // --- 5. TUMBUH COMMAND (BARU) ---
+    // --- 5. TUMBUH COMMAND ---
     // Format: TUMBUH [TinggiCm] [Kondisi1-5] [Milestone]
     // Contoh: TUMBUH 85 4 Generatif
     if (command === "TUMBUH") {
@@ -209,7 +228,9 @@ export async function POST(req: Request) {
       const conditionLabels: Record<number, string> = { 1: "Buruk 🔴", 2: "Kurang 🟠", 3: "Normal 🟡", 4: "Baik 🟢", 5: "Sangat Baik ✅" };
 
       if (error) {
-        await sendTelegramMessage(chatId, "❌ Gagal simpan laporan: " + error.message);
+        // [VULN-05 FIX] Log di server, user dapat pesan generik
+        console.error("[Webhook TUMBUH] DB Error:", error.message);
+        await sendTelegramMessage(chatId, "❌ Gagal menyimpan laporan pertumbuhan. Coba lagi nanti.");
       } else {
         await sendTelegramMessage(
           chatId,
@@ -224,7 +245,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // --- 6. LAHAN COMMAND (BARU) ---
+    // --- 6. LAHAN COMMAND ---
     if (command === "LAHAN") {
       const { data: lands } = await supabase
         .from("lands")

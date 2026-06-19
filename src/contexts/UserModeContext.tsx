@@ -12,8 +12,11 @@ interface UserModeContextType {
 
 const UserModeContext = createContext<UserModeContextType | undefined>(undefined);
 
+import { useRouter } from 'next/navigation';
+
 export function UserModeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setModeState] = useState<UserMode>("pro");
+  const router = useRouter();
 
   useEffect(() => {
     // In a real app, you would fetch this from Supabase `profiles` table.
@@ -31,7 +34,13 @@ export function UserModeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleMode = () => {
-    setMode(mode === "pro" ? "garden" : "pro");
+    const newMode = mode === "pro" ? "garden" : "pro";
+    setMode(newMode);
+    if (newMode === 'garden') {
+      router.push('/garden');
+    } else {
+      router.push('/');
+    }
   };
 
   return (

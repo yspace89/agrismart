@@ -15,19 +15,19 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-700">
-      <div className="flex justify-between items-end">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-0">
         <div>
-          <h2 className="text-3xl font-bold text-white tracking-tight">Overview Operasional</h2>
-          <p className="text-slate-400">
+          <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Overview Operasional</h2>
+          <p className="text-sm md:text-base text-slate-400 mt-1">
             Selamat datang kembali. Monitor kondisi lahan Anda secara real-time.
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800">
+        <div className="flex w-full md:w-auto gap-3">
+          <Button variant="outline" className="flex-1 md:flex-none bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800">
             <Filter className="w-4 h-4 mr-2" /> Filter
           </Button>
-          <Button className="bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+          <Button className="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)]">
             <Plus className="w-4 h-4 mr-2" /> Tambah Proyek
           </Button>
         </div>
@@ -78,8 +78,8 @@ export default async function DashboardPage() {
             />
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="overflow-x-auto">
+          <Table className="min-w-[600px]">
             <TableHeader className="border-slate-800">
               <TableRow className="hover:bg-transparent">
                 <TableHead className="text-slate-400">Lokasi/Petak</TableHead>

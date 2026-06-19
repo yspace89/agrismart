@@ -6,13 +6,17 @@ import { Sidebar } from "@/components/dashboard/Sidebar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Agrinova ERP | Predictive Agriculture",
-  description: "Platform Manajemen Agrikultur Cerdas",
+  title: "Agritiva | Integrated Farming Solutions",
+  description: "Platform Manajemen Pertanian Terpadu — Agritiva Integrated Farming Solutions",
   manifest: "/manifest.json",
-  themeColor: "#0f172a",
+};
+
+export const viewport = {
+  themeColor: "#1b4332",
 };
 
 import { UserModeProvider } from "@/contexts/UserModeContext";
+import { BottomBar } from "@/components/dashboard/BottomBar";
 
 export default function RootLayout({
   children,
@@ -21,13 +25,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`${inter.className} bg-slate-950 text-slate-50`}>
+      <body className={`${inter.className} bg-aesthetic-mesh text-slate-800`}>
         <UserModeProvider>
-          <div className="flex h-screen overflow-hidden">
+          <div className="flex h-screen overflow-hidden bg-transparent text-slate-800">
             <Sidebar />
-            <main className="flex-1 overflow-y-auto bg-slate-900/50">
+            <main className="flex-1 overflow-y-auto pb-24 md:pb-0 px-4 md:px-8 py-6">
               {children}
             </main>
+            <BottomBar />
           </div>
         </UserModeProvider>
       </body>

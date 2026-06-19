@@ -89,18 +89,18 @@ export default function FinancePage() {
   }, []);
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-700">
-      <div className="flex justify-between items-end">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-0">
         <div>
-          <h2 className="text-3xl font-bold text-white tracking-tight">Financial Intelligence</h2>
-          <p className="text-slate-400">Monitoring cashflow, burn-rate, dan profitabilitas project.</p>
+          <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Financial Intelligence</h2>
+          <p className="text-sm md:text-base text-slate-400 mt-1">Monitoring cashflow, burn-rate, dan profitabilitas project.</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="bg-slate-900 border-slate-800 text-slate-300">
+        <div className="flex w-full md:w-auto gap-3">
+          <Button variant="outline" className="flex-1 md:flex-none bg-slate-900 border-slate-800 text-slate-300">
             <Calendar className="w-4 h-4 mr-2" /> Q2 2026
           </Button>
-          <Button className="bg-emerald-600 hover:bg-emerald-500">
-            <Receipt className="w-4 h-4 mr-2" /> Download Report
+          <Button className="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-500">
+            <Receipt className="w-4 h-4 mr-2" /> Download
           </Button>
         </div>
       </div>
@@ -258,8 +258,8 @@ export default function FinancePage() {
             <Input placeholder="Cari transaksi..." className="pl-9 bg-slate-950 border-slate-800" />
           </div>
         </CardHeader>
-        <CardContent className="p-0">
-          <table className="w-full text-left border-collapse">
+        <CardContent className="p-0 overflow-x-auto">
+          <table className="w-full min-w-[600px] text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-800 bg-slate-950/50">
                 <th className="p-4 text-xs font-bold text-slate-500 uppercase">Tanggal</th>

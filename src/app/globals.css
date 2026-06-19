@@ -128,3 +128,68 @@
     @apply font-sans;
   }
 }
+
+/* ============================================================
+   AGRITIVA BRAND COLOR TOKENS
+   Forest Green  → primary brand (logo circle & text)
+   Terracotta    → accent brand (leaf & cow silhouette)
+   ============================================================ */
+:root {
+  --agritiva-green-950: #071610;
+  --agritiva-green-900: #0d1f17;
+  --agritiva-green-800: #122b20;
+  --agritiva-green-700: #1b4332;
+  --agritiva-green-600: #2d6a4f;
+  --agritiva-green-500: #40916c;
+  --agritiva-green-400: #52b788;
+  --agritiva-green-300: #74c69d;
+  --agritiva-green-200: #95d5b2;
+  --agritiva-green-100: #b7e4c7;
+
+  --agritiva-terra-900: #6b2c0e;
+  --agritiva-terra-800: #8c3a12;
+  --agritiva-terra-700: #a84a18;
+  --agritiva-terra-600: #c06c35;
+  --agritiva-terra-500: #d4845a;
+  --agritiva-terra-400: #e09e7e;
+  --agritiva-terra-300: #ebb99e;
+  --agritiva-terra-200: #f5d4be;
+  --agritiva-terra-100: #faeade;
+}
+
+/* Agritiva utility classes */
+.text-agritiva-green { color: var(--agritiva-green-500); }
+.text-agritiva-terra { color: var(--agritiva-terra-600); }
+.bg-agritiva-green { background-color: var(--agritiva-green-700); }
+.bg-agritiva-dark { background-color: var(--agritiva-green-900); }
+.border-agritiva-green { border-color: var(--agritiva-green-700); }
+.shadow-agritiva { box-shadow: 0 0 30px rgba(64, 145, 108, 0.2); }
+.shadow-agritiva-terra { box-shadow: 0 0 30px rgba(192, 108, 53, 0.2); }
+
+/* ============================================================
+   AESTHETIC & PLAYFUL UTILITIES (Gen Z Vibe)
+   ============================================================ */
+.bg-aesthetic-mesh {
+  background-color: #fdfcf9; /* Soft cream/off-white base */
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(145, 40%, 92%, 0.7) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(28, 80%, 92%, 0.7) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(145, 40%, 92%, 0.7) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(28, 80%, 92%, 0.7) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+.shadow-soft {
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.04), 0 4px 16px -4px rgba(0, 0, 0, 0.02);
+}
+.glass-panel {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+.glass-panel-heavy {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}

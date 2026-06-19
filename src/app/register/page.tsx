@@ -2,61 +2,89 @@ import { register } from './actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { AlertCircle, Leaf } from 'lucide-react'
+import { AlertCircle, CheckCircle, KeyRound } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; message?: string }>
 }) {
   const resolvedParams = await searchParams;
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden">
-      {/* Background accents */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]" />
-      
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden bg-aesthetic-mesh">
+      {/* Decorative floating blobs (Gen Z vibe) */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none opacity-60 mix-blend-multiply" style={{background: 'radial-gradient(circle, #b7e4c7 0%, transparent 70%)'}} />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none opacity-60 mix-blend-multiply" style={{background: 'radial-gradient(circle, #f5d4be 0%, transparent 70%)'}} />
+      <div className="absolute top-[40%] left-[60%] w-[300px] h-[300px] rounded-full blur-[80px] pointer-events-none opacity-40 mix-blend-multiply" style={{background: 'radial-gradient(circle, #c8e1ff 0%, transparent 70%)'}} />
+
+      {/* Logo mark */}
       <div className="z-10 mb-8 flex flex-col items-center">
-        <div className="p-3 bg-emerald-500/10 rounded-xl mb-4 border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-          <Leaf className="w-10 h-10 text-emerald-500" />
+        <div className="relative mb-6">
+          <div className="absolute inset-0 rounded-3xl blur-2xl opacity-40" style={{background: 'linear-gradient(135deg, #40916c, #e09e7e)'}} />
+          <div className="relative w-20 h-20 rounded-[2rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #40916c 100%)'}}>
+            <span className="text-white font-black text-4xl tracking-tighter select-none">A</span>
+          </div>
         </div>
-        <h1 className="text-3xl font-bold text-white tracking-tight">Agrinova</h1>
-        <p className="text-slate-400 mt-2">Create your account</p>
+        <h1 className="text-4xl font-black tracking-tighter text-[#1b4332]">agritiva</h1>
+        <p className="text-[10px] uppercase tracking-[0.3em] font-bold mt-2 text-[#40916c]">Smart Farming</p>
       </div>
 
-      <Card className="w-full max-w-md bg-slate-900 border-slate-800 shadow-2xl z-10">
-        <CardHeader className="space-y-1 pb-6">
-          <CardTitle className="text-2xl font-bold text-white text-center">Buat Akun Baru</CardTitle>
-          <CardDescription className="text-slate-400 text-center">
-            Daftarkan email Anda untuk mulai mengelola lahan
+      <Card className="w-full max-w-md shadow-soft z-10 glass-panel-heavy border-white/50 rounded-[2.5rem] overflow-hidden">
+        <CardHeader className="space-y-2 pb-6 pt-8">
+          <CardTitle className="text-2xl font-black text-slate-800 text-center tracking-tight">Daftar Akun Baru</CardTitle>
+          <CardDescription className="text-center text-slate-500 font-medium">
+            Gabung ke Agritiva dengan kode undangan
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form action={register} className="space-y-4">
+        <CardContent className="pt-2 px-8 pb-10">
+          <form action={register} className="space-y-5">
             {resolvedParams.error && (
-              <div className="p-3 mb-4 rounded-lg bg-red-500/10 border border-red-500/20 flex gap-2 items-start text-sm text-red-200">
-                <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-                <p>{resolvedParams.error}</p>
+              <div className="p-4 mb-2 rounded-2xl bg-red-50/80 border border-red-100 flex gap-3 items-start text-sm text-red-600">
+                <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
+                <p className="font-medium mt-0.5">{resolvedParams.error}</p>
               </div>
             )}
+            {resolvedParams.message && (
+              <div className="p-4 mb-2 rounded-2xl flex gap-3 items-start text-sm bg-[#52b788]/10 border border-[#52b788]/20 text-[#1b4332]">
+                <CheckCircle className="w-5 h-5 shrink-0 text-[#2d6a4f]" />
+                <p className="font-medium mt-0.5">{resolvedParams.message}</p>
+              </div>
+            )}
+
+            <div className="space-y-2.5">
+              <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="invite_code">
+                Kode Undangan
+              </label>
+              <div className="relative">
+                <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Input
+                  id="invite_code"
+                  name="invite_code"
+                  type="text"
+                  placeholder="Masukkan kode admin"
+                  required
+                  className="bg-white/70 border-white/80 h-14 rounded-2xl px-5 pl-12 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
+                />
+              </div>
+            </div>
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300" htmlFor="email">
+            <div className="space-y-2.5">
+              <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="email">
                 Email
               </label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="nama@perusahaan.com"
+                placeholder="nama@agritiva.com"
                 required
-                className="bg-slate-950 border-slate-800 text-white placeholder:text-slate-600 focus-visible:ring-emerald-500"
+                className="bg-white/70 border-white/80 h-14 rounded-2xl px-5 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
               />
             </div>
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300" htmlFor="password">
+            <div className="space-y-2.5">
+              <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="password">
                 Password
               </label>
               <Input
@@ -66,29 +94,33 @@ export default async function RegisterPage({
                 placeholder="Minimal 6 karakter"
                 required
                 minLength={6}
-                className="bg-slate-950 border-slate-800 text-white placeholder:text-slate-600 focus-visible:ring-emerald-500"
+                className="bg-white/70 border-white/80 h-14 rounded-2xl px-5 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
               />
             </div>
 
             <Button 
               type="submit" 
-              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-6 mt-4 shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+              className="w-full text-white font-bold text-base h-14 rounded-2xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+              style={{
+                background: 'linear-gradient(135deg, #1b4332, #40916c)',
+                boxShadow: '0 10px 25px -5px rgba(64,145,108,0.4)'
+              }}
             >
-              Daftar Sekarang
+              Buat Akun
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-slate-400">
+          <div className="mt-8 text-center text-sm font-medium text-slate-500">
             Sudah punya akun?{' '}
-            <Link href="/login" className="text-emerald-500 hover:text-emerald-400 font-medium transition-colors">
+            <Link href="/login" className="font-bold text-[#2d6a4f] transition-colors hover:text-[#1b4332]">
               Masuk di sini
             </Link>
           </div>
         </CardContent>
       </Card>
       
-      <div className="mt-auto pt-8 text-center text-sm text-slate-500">
-        &copy; {new Date().getFullYear()} Agrinova ERP. All rights reserved.
+      <div className="mt-auto pt-12 text-center text-[10px] uppercase tracking-wider font-bold text-slate-400">
+        &copy; {new Date().getFullYear()} Agritiva
       </div>
     </div>
   )

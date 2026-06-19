@@ -1,11 +1,11 @@
 {
-  "name": "Agrinova Urban ERP",
-  "short_name": "Agrinova",
-  "description": "Platform Manajemen Agrikultur & Urban Farming",
+  "name": "Agritiva — Integrated Farming Solutions",
+  "short_name": "Agritiva",
+  "description": "Platform Manajemen Pertanian Terpadu oleh Agritiva",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#10b981",
+  "background_color": "#0d1f17",
+  "theme_color": "#1b4332",
   "icons": [
     {
       "src": "/icon-192.png",
