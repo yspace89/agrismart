@@ -27,6 +27,27 @@ export async function addPlant(formData: FormData) {
   const estimatedHarvestDays = formData.get('estimated_harvest_days') ? parseInt(formData.get('estimated_harvest_days') as string, 10) : null;
   const growthStage = formData.get('growth_stage') as string;
 
+  const photoFile = formData.get('photo') as File | null;
+  let photoUrl = null;
+
+  if (photoFile && photoFile.size > 0) {
+    const fileExt = photoFile.name.split('.').pop() || 'jpg';
+    const fileName = `${user.id}/plants/${Date.now()}.${fileExt}`;
+
+    const { error: uploadError, data: uploadData } = await supabase.storage
+      .from('plant-photos')
+      .upload(fileName, photoFile);
+
+    if (uploadError) {
+      console.error('Error uploading plant photo:', uploadError);
+    } else if (uploadData) {
+      const { data: { publicUrl } } = supabase.storage
+        .from('plant-photos')
+        .getPublicUrl(uploadData.path);
+      photoUrl = publicUrl;
+    }
+  }
+
   const { error } = await supabase
     .from('plants')
     .insert({
@@ -43,6 +64,7 @@ export async function addPlant(formData: FormData) {
       planted_date: plantedDate || null,
       estimated_harvest_days: isNaN(estimatedHarvestDays as number) ? null : estimatedHarvestDays,
       growth_stage: growthStage || null,
+      photo_url: photoUrl,
     });
 
   if (error) {

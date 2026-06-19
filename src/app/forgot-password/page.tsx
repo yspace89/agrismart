@@ -29,9 +29,9 @@ export default async function ForgotPasswordPage({
         </div>
       </div>
 
-      <Card className="w-full max-w-md shadow-soft z-10 glass-panel-heavy border-white/50 rounded-[2.5rem] overflow-hidden">
-        <CardHeader className="space-y-2 pb-6 pt-8">
-          <CardTitle className="text-2xl font-black text-slate-800 text-center tracking-tight">Lupa Password?</CardTitle>
+      <Card className="w-full max-w-md shadow-soft z-10 glass-panel-heavy border-white/50 rounded-2xl overflow-hidden">
+        <CardHeader className="space-y-1 pb-6 pt-6">
+          <CardTitle className="text-xl font-black text-slate-800 text-center tracking-tight">Lupa Password?</CardTitle>
           <CardDescription className="text-center text-slate-500 font-medium">
             Masukkan email Anda untuk menerima tautan reset
           </CardDescription>
@@ -62,13 +62,13 @@ export default async function ForgotPasswordPage({
                 type="email"
                 placeholder="nama@agritiva.com"
                 required
-                className="bg-white/70 border-white/80 h-14 rounded-2xl px-5 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
+                className="bg-white/70 border-white/80 h-12 rounded-xl px-4 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full text-white font-bold text-base h-14 rounded-2xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+              className="w-full text-white font-bold text-sm h-12 rounded-xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               style={{
                 background: 'linear-gradient(135deg, #1b4332, #40916c)',
                 boxShadow: '0 10px 25px -5px rgba(64,145,108,0.4)'

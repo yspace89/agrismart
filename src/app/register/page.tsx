@@ -23,17 +23,17 @@ export default async function RegisterPage({
       <div className="z-10 mb-8 flex flex-col items-center">
         <div className="relative mb-6">
           <div className="absolute inset-0 rounded-3xl blur-2xl opacity-40" style={{background: 'linear-gradient(135deg, #40916c, #e09e7e)'}} />
-          <div className="relative w-20 h-20 rounded-[2rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #40916c 100%)'}}>
-            <span className="text-white font-black text-4xl tracking-tighter select-none">A</span>
+          <div className="relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #40916c 100%)'}}>
+            <span className="text-white font-black text-3xl tracking-tighter select-none">A</span>
           </div>
         </div>
-        <h1 className="text-4xl font-black tracking-tighter text-[#1b4332]">agritiva</h1>
+        <h1 className="text-2xl font-black tracking-tighter text-[#1b4332]">agritiva</h1>
         <p className="text-[10px] uppercase tracking-[0.3em] font-bold mt-2 text-[#40916c]">Smart Farming</p>
       </div>
 
-      <Card className="w-full max-w-md shadow-soft z-10 glass-panel-heavy border-white/50 rounded-[2.5rem] overflow-hidden">
-        <CardHeader className="space-y-2 pb-6 pt-8">
-          <CardTitle className="text-2xl font-black text-slate-800 text-center tracking-tight">Daftar Akun Baru</CardTitle>
+      <Card className="w-full max-w-md shadow-soft z-10 glass-panel-heavy border-white/50 rounded-2xl overflow-hidden">
+        <CardHeader className="space-y-1 pb-6 pt-6">
+          <CardTitle className="text-xl font-black text-slate-800 text-center tracking-tight">Daftar Akun Baru</CardTitle>
           <CardDescription className="text-center text-slate-500 font-medium">
             Gabung ke Agritiva dengan kode undangan
           </CardDescription>
@@ -65,7 +65,7 @@ export default async function RegisterPage({
                 type="email"
                 placeholder="nama@agritiva.com"
                 required
-                className="bg-white/70 border-white/80 h-14 rounded-2xl px-5 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
+                className="bg-white/70 border-white/80 h-12 rounded-xl px-4 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
               />
             </div>
             
@@ -79,13 +79,13 @@ export default async function RegisterPage({
                 placeholder="Minimal 6 karakter"
                 required
                 minLength={6}
-                className="bg-white/70 border-white/80 h-14 rounded-2xl px-5 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
+                className="bg-white/70 border-white/80 h-12 rounded-xl px-4 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
               />
             </div>
 
             <Button 
               type="submit" 
-              className="w-full text-white font-bold text-base h-14 rounded-2xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+              className="w-full text-white font-bold text-sm h-12 rounded-xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               style={{
                 background: 'linear-gradient(135deg, #1b4332, #40916c)',
                 boxShadow: '0 10px 25px -5px rgba(64,145,108,0.4)'
