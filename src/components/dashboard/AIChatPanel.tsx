@@ -176,7 +176,7 @@ export function AIChatPanel() {
             <div>
               <h3 className="font-bold text-slate-800 leading-tight">Tiva</h3>
               <p className="text-xs font-medium text-slate-500">
-                {mode === 'pro' ? 'Ahli Agribisnis & Peternakan' : 'Asisten Pertanian & Peternakan'}
+                Asisten Pertanian & Peternakan
               </p>
             </div>
           </div>
