@@ -24,7 +24,7 @@ export default async function LoginPage({
         <div className="relative mb-6">
           {/* Outer glow ring */}
           <div className="absolute inset-0 rounded-3xl blur-2xl opacity-40" style={{background: 'linear-gradient(135deg, #40916c, #e09e7e)'}} />
-          <div className="relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #40916c 100%)'}}>
+          <div className="relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #10b981 100%)'}}>
             <span className="text-white font-black text-3xl tracking-tighter select-none">A</span>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default async function LoginPage({
                 <label className="text-sm font-bold text-slate-700" htmlFor="password">
                   Password
                 </label>
-                <a href="/forgot-password" className="text-xs font-bold text-[#2d6a4f] hover:text-[#1b4332] hover:underline transition-colors cursor-pointer">
+                <a href="/forgot-password" className="text-xs font-bold text-agritiva-emerald hover:text-agritiva-green hover:underline transition-colors cursor-pointer">
                   Lupa Password?
                 </a>
               </div>
@@ -91,7 +91,7 @@ export default async function LoginPage({
               type="submit" 
               className="w-full text-white font-bold text-sm h-12 rounded-xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               style={{
-                background: 'linear-gradient(135deg, #1b4332, #40916c)',
+                background: 'linear-gradient(135deg, #1b4332, #10b981)',
                 boxShadow: '0 10px 25px -5px rgba(64,145,108,0.4)'
               }}
             >
@@ -101,7 +101,7 @@ export default async function LoginPage({
 
           <div className="mt-8 text-center text-sm font-medium text-slate-500">
             Belum punya akun?{' '}
-            <Link href="/register" className="font-bold text-[#2d6a4f] transition-colors hover:text-[#1b4332]">
+            <Link href="/register" className="font-bold text-agritiva-emerald transition-colors hover:text-agritiva-green">
               Daftar di sini
             </Link>
           </div>

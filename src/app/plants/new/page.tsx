@@ -297,7 +297,7 @@ export default function NewPlantPage() {
                 )}
 
                 <div className="pt-6 border-t border-slate-200/60 mt-8">
-                  <button type="button" onClick={() => setShowAdvanced(!showAdvanced)} className="text-sm font-bold text-[#2d6a4f] hover:text-[#1b4332] transition-colors flex items-center gap-2 mb-6">
+                  <button type="button" onClick={() => setShowAdvanced(!showAdvanced)} className="text-sm font-bold text-agritiva-emerald hover:text-agritiva-green transition-colors flex items-center gap-2 mb-6">
                     <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#52b788]/20">{showAdvanced ? '-' : '+'}</span>
                     {showAdvanced ? 'Sembunyikan Opsi Tambahan' : 'Tampilkan Opsi Tambahan (Spesies, Lokasi, Catatan)'}
                   </button>
@@ -338,7 +338,7 @@ export default function NewPlantPage() {
                 </div>
 
                 <div className="pt-4">
-                  <Button type="submit" disabled={isPending || isProcessing} className="w-full h-12 text-sm rounded-xl font-black tracking-wide bg-gradient-to-r from-[#1b4332] to-[#2d6a4f] hover:from-[#143627] hover:to-[#1b4332] text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] disabled:opacity-70 disabled:hover:-translate-y-0 disabled:cursor-not-allowed">
+                  <Button type="submit" disabled={isPending || isProcessing} className="w-full h-12 text-sm rounded-xl font-black tracking-wide bg-gradient-to-r from-agritiva-green to-agritiva-emerald hover:from-[#143627] hover:to-agritiva-green text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] disabled:opacity-70 disabled:hover:-translate-y-0 disabled:cursor-not-allowed">
                     {isPending ? 'Menyimpan...' : 'Simpan ke Kebun Saya 🪴'}
                   </Button>
                 </div>

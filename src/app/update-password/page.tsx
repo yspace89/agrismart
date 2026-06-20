@@ -23,7 +23,7 @@ export default async function UpdatePasswordPage({
       <div className="z-10 mb-8 flex flex-col items-center">
         <div className="relative mb-4">
           <div className="absolute inset-0 rounded-3xl blur-2xl opacity-40" style={{background: 'linear-gradient(135deg, #40916c, #e09e7e)'}} />
-          <div className="relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #40916c 100%)'}}>
+          <div className="relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #10b981 100%)'}}>
             <span className="text-white font-black text-3xl tracking-tighter select-none">A</span>
           </div>
         </div>
@@ -77,7 +77,7 @@ export default async function UpdatePasswordPage({
               type="submit" 
               className="w-full text-white font-bold text-sm h-12 rounded-xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               style={{
-                background: 'linear-gradient(135deg, #1b4332, #40916c)',
+                background: 'linear-gradient(135deg, #1b4332, #10b981)',
                 boxShadow: '0 10px 25px -5px rgba(64,145,108,0.4)'
               }}
             >

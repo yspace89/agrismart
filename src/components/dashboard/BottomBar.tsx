@@ -30,7 +30,7 @@ export function BottomBar() {
   const activeNavItems = mode === 'pro' ? navItemsPro : navItemsGarden;
 
   return (
-    <div className="md:hidden fixed bottom-6 left-6 right-6 h-16 glass-panel-heavy rounded-full z-50 flex items-center justify-around px-2 shadow-soft">
+    <div className="md:hidden fixed bottom-4 left-4 right-4 h-14 glass-panel-heavy rounded-2xl z-50 flex items-center justify-around px-2 shadow-soft">
       {activeNavItems.map((item) => {
         const isActive = pathname === item.href;
         return (
@@ -41,22 +41,20 @@ export function BottomBar() {
           >
             {/* Active Dot Indicator */}
             {isActive && (
-              <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full animate-in zoom-in bg-[#2d6a4f]" />
+              <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full animate-in zoom-in bg-agritiva-emerald" />
             )}
             
             <item.icon 
               className={cn(
-                "w-5 h-5 transition-all duration-300", 
-                isActive ? "scale-110 -translate-y-1" : "text-slate-400 group-hover:text-slate-600 group-active:scale-95"
+                "w-4 h-4 transition-all duration-300", 
+                isActive ? "scale-110 -translate-y-1 text-agritiva-emerald" : "text-slate-400 group-hover:text-slate-600 group-active:scale-95"
               )}
-              style={isActive ? {color: '#2d6a4f'} : {}} 
             />
             <span 
               className={cn(
                 "text-[10px] font-bold transition-colors duration-300 tracking-wide",
-                isActive ? "" : "text-slate-400 group-hover:text-slate-600"
+                isActive ? "text-agritiva-emerald" : "text-slate-400 group-hover:text-slate-600"
               )}
-              style={isActive ? {color: '#2d6a4f'} : {}}
             >
               {item.name}
             </span>

@@ -17,6 +17,8 @@ export const viewport = {
 
 import { UserModeProvider } from "@/contexts/UserModeContext";
 import { BottomBar } from "@/components/dashboard/BottomBar";
+import { TopBar } from "@/components/dashboard/TopBar";
+import { AIChatPanel } from "@/components/dashboard/AIChatPanel";
 
 export default function RootLayout({
   children,
@@ -25,14 +27,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`${inter.className} bg-aesthetic-mesh text-slate-800`}>
+      <body className={`${inter.className} bg-slate-50 text-slate-800`}>
         <UserModeProvider>
-          <div className="flex h-screen overflow-hidden bg-transparent text-slate-800">
+          <div className="flex h-screen overflow-hidden bg-slate-50">
             <Sidebar />
-            <main className="flex-1 overflow-y-auto pb-24 md:pb-0 px-4 md:px-8 py-6">
-              {children}
-            </main>
+            <div className="flex-1 flex flex-col h-full overflow-hidden">
+              <TopBar />
+              <main className="flex-1 overflow-y-auto pb-24 md:pb-0 px-4 md:px-8 py-6">
+                {children}
+              </main>
+            </div>
             <BottomBar />
+            <AIChatPanel />
           </div>
         </UserModeProvider>
       </body>

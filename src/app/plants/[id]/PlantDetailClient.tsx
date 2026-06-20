@@ -31,7 +31,7 @@ export default function PlantDetailClient({ plant, logs }: { plant: any, logs: a
       <div className="relative w-full h-[40vh] min-h-[300px] overflow-hidden bg-gradient-to-br from-[#d8f3dc] to-[#74c69d]">
         {/* Abstract shapes if no photo */}
         <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-10 -left-20 w-64 h-64 bg-[#1b4332] rounded-full blur-3xl mix-blend-multiply" />
+          <div className="absolute top-10 -left-20 w-64 h-64 bg-agritiva-green rounded-full blur-3xl mix-blend-multiply" />
           <div className="absolute bottom-10 -right-10 w-48 h-48 bg-[#95d5b2] rounded-full blur-2xl mix-blend-multiply" />
         </div>
         
@@ -209,7 +209,7 @@ export default function PlantDetailClient({ plant, logs }: { plant: any, logs: a
         >
           <button 
             onClick={() => setIsLogModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-4 rounded-full bg-gradient-to-r from-[#1b4332] to-[#2d6a4f] text-white font-black hover:scale-105 active:scale-95 transition-all shadow-lg"
+            className="flex items-center gap-2 px-6 py-4 rounded-full bg-gradient-to-r from-agritiva-green to-agritiva-emerald text-white font-black hover:scale-105 active:scale-95 transition-all shadow-lg"
           >
             <PlusCircle className="w-5 h-5" /> Jurnal Baru
           </button>
@@ -268,7 +268,7 @@ export default function PlantDetailClient({ plant, logs }: { plant: any, logs: a
                 </div>
               </div>
 
-              <Button type="submit" className="w-full h-14 rounded-full font-black tracking-wide bg-[#1b4332] hover:bg-[#2d6a4f] text-white shadow-xl hover:-translate-y-1 transition-all active:scale-95">
+              <Button type="submit" className="w-full h-14 rounded-full font-black tracking-wide bg-agritiva-green hover:bg-agritiva-emerald text-white shadow-xl hover:-translate-y-1 transition-all active:scale-95">
                 Simpan Jurnal
               </Button>
             </form>
@@ -298,7 +298,7 @@ export default function PlantDetailClient({ plant, logs }: { plant: any, logs: a
                 <option value="Panen">🟣 Sudah Dipanen</option>
               </select>
               
-              <Button type="submit" className="w-full h-14 rounded-full font-black tracking-wide bg-[#1b4332] hover:bg-[#2d6a4f] text-white shadow-xl hover:-translate-y-1 transition-all active:scale-95">
+              <Button type="submit" className="w-full h-14 rounded-full font-black tracking-wide bg-agritiva-green hover:bg-agritiva-emerald text-white shadow-xl hover:-translate-y-1 transition-all active:scale-95">
                 Simpan Status
               </Button>
             </form>

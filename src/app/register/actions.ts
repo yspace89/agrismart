@@ -8,11 +8,25 @@ export async function register(formData: FormData) {
 
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
-  if (!email || !password) {
-    redirect('/register?error=' + encodeURIComponent('Email dan password wajib diisi.'));
+  const fullName = formData.get('full_name') as string;
+  const phoneNumber = formData.get('phone_number') as string;
+  const location = formData.get('location') as string;
+
+  if (!email || !password || !fullName) {
+    redirect('/register?error=' + encodeURIComponent('Nama Lengkap, Email, dan Password wajib diisi.'));
   }
 
-  const { error } = await supabase.auth.signUp({ email, password })
+  const { error } = await supabase.auth.signUp({ 
+    email, 
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        phone_number: phoneNumber,
+        location: location
+      }
+    }
+  })
 
   if (error) {
     // [VULN-07 FIX] Juga tidak expose detail error registrasi ke user

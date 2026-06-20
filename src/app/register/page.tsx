@@ -23,7 +23,7 @@ export default async function RegisterPage({
       <div className="z-10 mb-8 flex flex-col items-center">
         <div className="relative mb-6">
           <div className="absolute inset-0 rounded-3xl blur-2xl opacity-40" style={{background: 'linear-gradient(135deg, #40916c, #e09e7e)'}} />
-          <div className="relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #40916c 100%)'}}>
+          <div className="relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #10b981 100%)'}}>
             <span className="text-white font-black text-3xl tracking-tighter select-none">A</span>
           </div>
         </div>
@@ -54,6 +54,46 @@ export default async function RegisterPage({
             )}
 
 
+            
+            <div className="space-y-2.5">
+              <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="full_name">
+                Nama Lengkap
+              </label>
+              <Input
+                id="full_name"
+                name="full_name"
+                type="text"
+                placeholder="Petani Hebat"
+                required
+                className="bg-white/70 border-white/80 h-12 rounded-xl px-4 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
+              />
+            </div>
+
+            <div className="space-y-2.5">
+              <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="phone_number">
+                Nomor WhatsApp
+              </label>
+              <Input
+                id="phone_number"
+                name="phone_number"
+                type="tel"
+                placeholder="08123456789"
+                className="bg-white/70 border-white/80 h-12 rounded-xl px-4 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
+              />
+            </div>
+
+            <div className="space-y-2.5">
+              <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="location">
+                Kota / Lokasi
+              </label>
+              <Input
+                id="location"
+                name="location"
+                type="text"
+                placeholder="Bandung, Jawa Barat"
+                className="bg-white/70 border-white/80 h-12 rounded-xl px-4 text-slate-900 placeholder:text-slate-400 focus:border-[#40916c] focus:ring-[#40916c] shadow-sm transition-all"
+              />
+            </div>
             
             <div className="space-y-2.5">
               <label className="text-sm font-bold text-slate-700 ml-1" htmlFor="email">
@@ -87,7 +127,7 @@ export default async function RegisterPage({
               type="submit" 
               className="w-full text-white font-bold text-sm h-12 rounded-xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               style={{
-                background: 'linear-gradient(135deg, #1b4332, #40916c)',
+                background: 'linear-gradient(135deg, #1b4332, #10b981)',
                 boxShadow: '0 10px 25px -5px rgba(64,145,108,0.4)'
               }}
             >
@@ -97,7 +137,7 @@ export default async function RegisterPage({
 
           <div className="mt-8 text-center text-sm font-medium text-slate-500">
             Sudah punya akun?{' '}
-            <Link href="/login" className="font-bold text-[#2d6a4f] transition-colors hover:text-[#1b4332]">
+            <Link href="/login" className="font-bold text-agritiva-emerald transition-colors hover:text-agritiva-green">
               Masuk di sini
             </Link>
           </div>

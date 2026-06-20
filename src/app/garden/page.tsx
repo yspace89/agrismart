@@ -26,68 +26,68 @@ export default async function GardenDashboardPage() {
   const recentPlants = plants?.slice(0, 6);
 
   return (
-    <div className="space-y-6 max-w-5xl pb-10">
-      <div className="mb-8">
-        <h1 className="text-4xl font-black tracking-tight text-slate-900 mb-2">Beranda Kebun <span className="inline-block animate-bounce ml-2">🪴</span></h1>
-        <p className="text-slate-500 font-medium">Ringkasan kondisi tanaman Anda hari ini.</p>
+    <div className="space-y-4 md:space-y-6 max-w-5xl pb-28 px-4 md:px-0">
+      <div className="mb-6 pt-4">
+        <h1 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 mb-1 md:mb-2">Beranda Kebun <span className="inline-block animate-bounce ml-2">🪴</span></h1>
+        <p className="text-xs md:text-sm text-slate-500 font-medium">Ringkasan kondisi tanaman Anda hari ini.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="glass-panel border-white/60 shadow-soft rounded-3xl overflow-hidden relative group">
+        <Card className="glass-panel border-white/60 shadow-soft rounded-2xl md:rounded-3xl overflow-hidden relative group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-green-200/40 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-110" />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-            <CardTitle className="text-sm font-bold text-slate-500 uppercase tracking-wider">Total Tanaman</CardTitle>
-            <div className="text-2xl">🪴</div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 md:p-6 pb-2 relative z-10">
+            <CardTitle className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Tanaman</CardTitle>
+            <div className="text-xl">🪴</div>
           </CardHeader>
-          <CardContent className="relative z-10">
-            <div className="text-4xl font-black text-[#1b4332] tracking-tighter">
-              {stats.total_plants} <span className="text-xl font-bold text-slate-400 tracking-normal">Tanaman</span>
+          <CardContent className="p-4 md:p-6 pt-0 relative z-10">
+            <div className="text-3xl md:text-4xl font-black text-agritiva-green tracking-tighter">
+              {stats.total_plants} <span className="text-sm md:text-xl font-bold text-slate-400 tracking-normal">Tanaman</span>
             </div>
-            <p className="text-xs font-semibold text-slate-400 mt-2">Dalam koleksi Anda</p>
+            <p className="text-[10px] md:text-xs font-semibold text-slate-400 mt-1">Dalam koleksi Anda</p>
           </CardContent>
         </Card>
 
-        <Card className="glass-panel border-white/60 shadow-soft rounded-3xl overflow-hidden relative group">
+        <Card className="glass-panel border-white/60 shadow-soft rounded-2xl md:rounded-3xl overflow-hidden relative group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-red-200/40 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-110" />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-            <CardTitle className="text-sm font-bold text-slate-500 uppercase tracking-wider">Perhatian Khusus</CardTitle>
-            <div className="text-2xl">🚑</div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 md:p-6 pb-2 relative z-10">
+            <CardTitle className="text-xs font-bold text-slate-500 uppercase tracking-wider">Perhatian Khusus</CardTitle>
+            <div className="text-xl">🚑</div>
           </CardHeader>
-          <CardContent className="relative z-10">
-            <div className="text-4xl font-black text-red-500 tracking-tighter">
-              {stats.sick_plants} <span className="text-xl font-bold text-slate-400 tracking-normal">Tanaman</span>
+          <CardContent className="p-4 md:p-6 pt-0 relative z-10">
+            <div className="text-3xl md:text-4xl font-black text-red-500 tracking-tighter">
+              {stats.sick_plants} <span className="text-sm md:text-xl font-bold text-slate-400 tracking-normal">Tanaman</span>
             </div>
-            <p className="text-xs font-semibold text-slate-400 mt-2">Sakit atau kering</p>
+            <p className="text-[10px] md:text-xs font-semibold text-slate-400 mt-1">Sakit atau kering</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="glass-panel border-white/60 shadow-soft rounded-3xl mt-8">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-bold text-slate-800">Tanaman Terbaru</CardTitle>
+      <Card className="glass-panel border-white/60 shadow-soft rounded-2xl md:rounded-3xl mt-4 md:mt-8">
+        <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
+          <CardTitle className="text-lg md:text-xl font-bold text-slate-800">Tanaman Terbaru</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 md:p-6 pt-2 md:pt-4">
           {recentPlants && recentPlants.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {recentPlants.map((plant) => (
                 <Link key={plant.id} href={`/plants/${plant.id}`}>
-                  <div className="p-5 rounded-2xl border border-white/50 bg-white/40 hover:bg-white/70 transition-all duration-300 shadow-sm hover:shadow-md group h-full">
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-xl shadow-inner">
+                  <div className="p-4 md:p-5 rounded-xl md:rounded-2xl border border-white/50 bg-white/40 hover:bg-white/70 transition-all duration-300 shadow-sm hover:shadow-md group h-full">
+                    <div className="flex justify-between items-start mb-2 md:mb-3">
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-100 flex items-center justify-center text-lg md:text-xl shadow-inner">
                         🌱
                       </div>
                       <span className={cn(
-                        "text-[10px] px-3 py-1 rounded-full font-bold tracking-wide uppercase shadow-sm",
-                        plant.status === 'Sehat' ? 'bg-[#52b788]/20 text-[#2d6a4f]' :
+                        "text-[9px] md:text-[10px] px-2 md:px-3 py-1 rounded-full font-bold tracking-wide uppercase shadow-sm",
+                        plant.status === 'Sehat' ? 'bg-agritiva-emerald/20 text-agritiva-green' :
                         plant.status === 'Sakit' ? 'bg-red-100 text-red-600' :
-                        plant.status === 'Kering' ? 'bg-orange-100 text-orange-600' :
+                        plant.status === 'Kering' ? 'bg-agritiva-gold/20 text-agritiva-gold' :
                         'bg-slate-100 text-slate-600'
                       )}>
                         {plant.status}
                       </span>
                     </div>
-                    <h3 className="font-bold text-lg text-slate-800 group-hover:text-[#1b4332] transition-colors">{plant.name}</h3>
-                    <p className="text-xs font-semibold text-slate-500">{plant.type}</p>
+                    <h3 className="font-bold text-base md:text-lg text-slate-800 group-hover:text-agritiva-emerald transition-colors">{plant.name}</h3>
+                    <p className="text-[10px] md:text-xs font-semibold text-slate-500">{plant.type}</p>
                   </div>
                 </Link>
               ))}
@@ -97,7 +97,7 @@ export default async function GardenDashboardPage() {
               <div className="text-5xl mb-4">🌱</div>
               <p className="text-slate-500 font-medium mb-6">Belum ada tanaman di kebun Anda.</p>
               <Link href="/plants/new">
-                <Button className="rounded-full px-8 bg-[#1b4332] hover:bg-[#2d6a4f] text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <Button className="rounded-full px-8 bg-agritiva-green hover:bg-agritiva-emerald text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   Tambah Tanaman Baru
                 </Button>
               </Link>
@@ -106,23 +106,23 @@ export default async function GardenDashboardPage() {
         </CardContent>
       </Card>
 
-      <Card className="glass-panel border-white/60 shadow-soft rounded-3xl mt-8">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-slate-800">Tips Berkebun Hari Ini 💡</CardTitle>
+      <Card className="glass-panel border-white/60 shadow-soft rounded-2xl md:rounded-3xl mt-4 md:mt-8">
+        <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
+          <CardTitle className="text-lg md:text-xl font-bold text-slate-800">Tips Berkebun Hari Ini 💡</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-100 flex gap-4 items-start">
-            <div className="text-2xl mt-1">💧</div>
+        <CardContent className="p-4 md:p-6 pt-0 space-y-3 md:space-y-4">
+          <div className="p-3 md:p-4 rounded-xl md:rounded-2xl bg-blue-50/80 border border-blue-100 flex gap-3 items-start">
+            <div className="text-xl md:text-2xl mt-0.5 md:mt-1">💧</div>
             <div>
-              <h4 className="font-bold text-blue-900">Waktu Siram Terbaik</h4>
-              <p className="text-sm text-blue-700/80 mt-1 font-medium">Siram tanaman di pagi hari sebelum jam 9 atau sore hari setelah jam 4 untuk menghindari penguapan cepat.</p>
+              <h4 className="font-bold text-sm md:text-base text-blue-900">Waktu Siram Terbaik</h4>
+              <p className="text-xs md:text-sm text-blue-700/80 mt-0.5 md:mt-1 font-medium leading-relaxed">Siram tanaman di pagi hari sebelum jam 9 atau sore hari setelah jam 4 untuk menghindari penguapan cepat.</p>
             </div>
           </div>
-          <div className="p-4 rounded-2xl bg-orange-50/80 border border-orange-100 flex gap-4 items-start">
-            <div className="text-2xl mt-1">☀️</div>
+          <div className="p-3 md:p-4 rounded-xl md:rounded-2xl bg-orange-50/80 border border-orange-100 flex gap-3 items-start">
+            <div className="text-xl md:text-2xl mt-0.5 md:mt-1">☀️</div>
             <div>
-              <h4 className="font-bold text-orange-900">Rotasi Pot</h4>
-              <p className="text-sm text-orange-700/80 mt-1 font-medium">Putar pot tanaman indoor Anda 90 derajat setiap minggu agar pertumbuhannya merata ke arah cahaya.</p>
+              <h4 className="font-bold text-sm md:text-base text-orange-900">Rotasi Pot</h4>
+              <p className="text-xs md:text-sm text-orange-700/80 mt-0.5 md:mt-1 font-medium leading-relaxed">Putar pot tanaman indoor Anda 90 derajat setiap minggu agar pertumbuhannya merata ke arah cahaya.</p>
             </div>
           </div>
         </CardContent>

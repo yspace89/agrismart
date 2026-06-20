@@ -67,7 +67,7 @@ export default async function DashboardPage() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-xl font-bold text-white">Aktivitas Terakhir (Feed Lapangan)</CardTitle>
-            <p className="text-sm text-slate-500 mt-0.5">Laporan masuk dari Field Officer via Telegram</p>
+            <p className="text-sm text-slate-500 mt-0.5">Catatan aktivitas dan laporan harian</p>
           </div>
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
               {stats.recentLogs.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-10 text-slate-500">
-                    Belum ada aktivitas. Minta Field Officer kirim laporan via Telegram!
+                    Belum ada aktivitas yang dicatat.
                   </TableCell>
                 </TableRow>
               )}

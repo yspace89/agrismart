@@ -13,24 +13,64 @@ interface UserModeContextType {
 const UserModeContext = createContext<UserModeContextType | undefined>(undefined);
 
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 export function UserModeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setModeState] = useState<UserMode>("pro");
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    // In a real app, you would fetch this from Supabase `profiles` table.
-    // For now, we will store it in localStorage for quick testing.
-    const storedMode = localStorage.getItem("agri_user_mode") as UserMode;
-    if (storedMode) {
-      setModeState(storedMode);
+    async function loadMode() {
+      // Coba ambil dari localStorage dulu agar UI cepat (optimistic UI)
+      const storedMode = localStorage.getItem("agri_user_mode") as UserMode;
+      if (storedMode) setModeState(storedMode);
+
+      // Sinkronisasi dari Supabase
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('user_mode')
+            .eq('id', user.id)
+            .single();
+          
+          if (!error && data && data.user_mode) {
+            const serverMode = data.user_mode as UserMode;
+            if (serverMode !== storedMode) {
+              setModeState(serverMode);
+              localStorage.setItem("agri_user_mode", serverMode);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load user mode from Supabase", e);
+      } finally {
+        setIsLoading(false);
+      }
     }
+    
+    loadMode();
   }, []);
 
-  const setMode = (newMode: UserMode) => {
+  const setMode = async (newMode: UserMode) => {
+    // Optimistic UI update
     setModeState(newMode);
     localStorage.setItem("agri_user_mode", newMode);
-    // TODO: Also update the `profiles` table via Supabase API
+    
+    // Update ke database
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ user_mode: newMode })
+          .eq('id', user.id);
+      }
+    } catch (e) {
+      console.error("Failed to update user mode to Supabase", e);
+    }
   };
 
   const toggleMode = () => {
