@@ -1,18 +1,68 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { addPlantLog, updatePlantStatus } from '@/lib/garden-actions';
 import Link from 'next/link';
-import { Droplet, Sun, Calendar, PlusCircle, MapPin, Activity, ArrowLeft, Camera, X } from 'lucide-react';
+import { Droplet, Sun, Calendar, PlusCircle, MapPin, Activity, ArrowLeft, Camera, X, Bell, BellOff, Trash2, Plus } from 'lucide-react';
 import Image from 'next/image';
 
 export default function PlantDetailClient({ plant, logs }: { plant: any, logs: any[] }) {
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
+
+  // State untuk reminders
+  type Reminder = { id: string; activity_type: string; frequency_days: number; notification_hour: number; is_active: boolean; };
+  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [reminderLoading, setReminderLoading] = useState(false);
+  const [newReminder, setNewReminder] = useState({ activity_type: 'Siram', frequency_days: 1, notification_hour: 7 });
+
+  useEffect(() => {
+    fetch(`/api/reminders?plant_id=${plant.id}`)
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setReminders(data); })
+      .catch(() => {});
+  }, [plant.id]);
+
+  const handleAddReminder = async () => {
+    setReminderLoading(true);
+    try {
+      const res = await fetch('/api/reminders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plant_id: plant.id, ...newReminder }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setReminders(prev => [data, ...prev]);
+        setIsReminderModalOpen(false);
+      }
+    } finally {
+      setReminderLoading(false);
+    }
+  };
+
+  const handleToggleReminder = async (id: string, currentActive: boolean) => {
+    const res = await fetch(`/api/reminders?id=${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_active: !currentActive }),
+    });
+    if (res.ok) {
+      setReminders(prev => prev.map(r => r.id === id ? { ...r, is_active: !currentActive } : r));
+    }
+  };
+
+  const handleDeleteReminder = async (id: string) => {
+    const res = await fetch(`/api/reminders?id=${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setReminders(prev => prev.filter(r => r.id !== id));
+    }
+  };
 
   // Status Colors
   const getStatusStyle = (status: string) => {
@@ -198,7 +248,60 @@ export default function PlantDetailClient({ plant, logs }: { plant: any, logs: a
             </div>
           )}
         </div>
-      </div>
+        </div>
+
+        {/* 4. Section Pengingat Perawatan */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Pengingat 🔔</h2>
+            <button
+              onClick={() => setIsReminderModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-agritiva-green/10 text-agritiva-green font-bold text-sm hover:bg-agritiva-green/20 transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Tambah
+            </button>
+          </div>
+
+          {reminders.length === 0 ? (
+            <div className="text-center py-10 bg-white rounded-3xl border-2 border-dashed border-slate-100">
+              <Bell className="w-8 h-8 mx-auto text-slate-300 mb-3" />
+              <p className="font-bold text-slate-500 text-sm">Belum ada pengingat</p>
+              <p className="text-xs text-slate-400 mt-1">Tambah jadwal agar tidak lupa merawat tanaman ini</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {reminders.map(r => (
+                <div key={r.id} className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                  <div className="text-2xl">
+                    {r.activity_type === 'Siram' && '💧'}
+                    {r.activity_type === 'Pupuk' && '🌿'}
+                    {r.activity_type === 'Pangkas' && '✂️'}
+                    {r.activity_type === 'Semprot' && '💨'}
+                    {!['Siram','Pupuk','Pangkas','Semprot'].includes(r.activity_type) && '📋'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-slate-800 text-sm">{r.activity_type}</p>
+                    <p className="text-xs text-slate-400">
+                      Setiap {r.frequency_days} hari · jam {String(r.notification_hour).padStart(2,'0')}:00
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleToggleReminder(r.id, r.is_active)}
+                    className={`w-10 h-6 rounded-full transition-colors flex items-center ${r.is_active ? 'bg-agritiva-green justify-end' : 'bg-slate-200 justify-start'}`}
+                  >
+                    <span className="w-4 h-4 bg-white rounded-full mx-1 shadow-sm" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteReminder(r.id)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full text-red-400 hover:bg-red-50 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
       {/* 4. Floating Action Bar (FAB) */}
       <div className="fixed bottom-24 left-0 right-0 px-4 md:px-0 pointer-events-none z-40 flex justify-center">
@@ -302,6 +405,67 @@ export default function PlantDetailClient({ plant, logs }: { plant: any, logs: a
                 Simpan Status
               </Button>
             </form>
+          </div>
+        </DialogContent>
+      </Dialog>
+      {/* Modal: Tambah Pengingat */}
+      <Dialog open={isReminderModalOpen} onOpenChange={setIsReminderModalOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-[2rem] p-0 overflow-hidden border-0 shadow-2xl bg-white/95 backdrop-blur-xl">
+          <div className="p-6 md:p-8 space-y-6">
+            <DialogHeader className="text-left space-y-2">
+              <DialogTitle className="text-2xl font-black text-slate-900">Tambah Pengingat 🔔</DialogTitle>
+              <p className="text-sm font-medium text-slate-500">Atur jadwal notifikasi untuk {plant.name}.</p>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Jenis Aktivitas</label>
+                <select
+                  value={newReminder.activity_type}
+                  onChange={e => setNewReminder(p => ({ ...p, activity_type: e.target.value }))}
+                  className="h-12 px-4 w-full rounded-2xl border border-slate-200 bg-white font-bold text-slate-800 focus:outline-none focus:border-agritiva-green focus:ring-4 focus:ring-agritiva-green/10 transition-all appearance-none cursor-pointer"
+                >
+                  <option value="Siram">💧 Menyiram</option>
+                  <option value="Pupuk">🌿 Memberi Pupuk</option>
+                  <option value="Pangkas">✂️ Memangkas</option>
+                  <option value="Semprot">💨 Menyemprot</option>
+                  <option value="Lainnya">📋 Lainnya</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Setiap (hari)</label>
+                  <input
+                    type="number" min={1} max={30}
+                    value={newReminder.frequency_days}
+                    onChange={e => setNewReminder(p => ({ ...p, frequency_days: Number(e.target.value) }))}
+                    className="h-12 px-4 w-full rounded-2xl border border-slate-200 bg-white font-bold text-slate-800 focus:outline-none focus:border-agritiva-green focus:ring-4 focus:ring-agritiva-green/10 transition-all text-center"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Jam Notif (WIB)</label>
+                  <input
+                    type="number" min={0} max={23}
+                    value={newReminder.notification_hour}
+                    onChange={e => setNewReminder(p => ({ ...p, notification_hour: Number(e.target.value) }))}
+                    className="h-12 px-4 w-full rounded-2xl border border-slate-200 bg-white font-bold text-slate-800 focus:outline-none focus:border-agritiva-green focus:ring-4 focus:ring-agritiva-green/10 transition-all text-center"
+                  />
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-400 bg-slate-50 rounded-2xl px-4 py-3">
+                🔔 Notifikasi akan dikirim ke browser kamu setiap {newReminder.frequency_days} hari sekali pada jam <strong>{String(newReminder.notification_hour).padStart(2,'0')}:00 WIB</strong>.
+              </p>
+
+              <Button
+                onClick={handleAddReminder}
+                disabled={reminderLoading}
+                className="w-full h-14 rounded-full font-black tracking-wide bg-agritiva-green hover:bg-agritiva-emerald text-white shadow-xl hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50"
+              >
+                {reminderLoading ? 'Menyimpan...' : 'Simpan Pengingat'}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
