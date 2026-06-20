@@ -27,45 +27,44 @@ export function RegisterPopup({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Content Area */}
-        <div className="space-y-5">
+        {/* Content Area */}
+        <div className="space-y-4">
           <div className="bg-emerald-50/50 rounded-xl p-4 border border-emerald-100/50 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1 h-full bg-agritiva-emerald"></div>
-            <p className="text-sm text-slate-700 leading-relaxed text-justify relative z-10">
+            <p className="text-sm text-slate-700 leading-relaxed text-justify relative z-10 mb-4">
               Platform ERP Agritiva saat ini difokuskan khusus untuk keperluan <strong>Business-to-Business (B2B)</strong> melalui jalur undangan.
             </p>
+            <a 
+              href="https://wa.me/6289606710829" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#128C7E] text-white text-sm font-semibold py-2.5 px-4 rounded-lg transition-all shadow-sm hover:shadow-md active:scale-[0.98] relative z-10"
+            >
+              Hubungi Owner via WhatsApp
+              <ExternalLink className="w-4 h-4 ml-1" />
+            </a>
           </div>
 
           <div className="flex items-start gap-4 bg-orange-50/50 rounded-xl p-4 border border-orange-100/50">
             <Bot className="w-8 h-8 text-agritiva-gold shrink-0 animate-bounce hover:rotate-12 hover:scale-110 transition-all cursor-pointer duration-300" style={{ animationDuration: '2s' }} />
             <p className="text-sm text-slate-700 leading-relaxed text-justify">
-              Sebagai bentuk dedikasi membangun petani Indonesia, fitur <strong className="text-agritiva-gold">Asisten AI Tiva</strong> kami buka secara <strong className="text-agritiva-emerald">Publik</strong>! Silakan sapa Tiva di pojok kanan bawah.
+              Sebagai bentuk dukungan kepada sesama penyuka tanaman, fitur <strong className="text-agritiva-gold">Asisten AI Tiva</strong> kami buka secara <strong className="text-agritiva-emerald">Publik</strong>! Silakan sapa Tiva di pojok kanan bawah.
             </p>
           </div>
 
-          <div className="pt-2">
-            <p className="text-xs text-slate-500 mb-3 text-center">
-              Tertarik menjadi mitra atau melihat portfolio kreator?
+          <div className="bg-slate-50/80 rounded-xl p-3.5 border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-xs text-slate-500 leading-tight">
+              Ingin membuat aplikasi sistem cerdas untuk bisnis Anda?
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <a 
-                href="https://wa.me/6289606710829" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white text-sm font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
-              >
-                WhatsApp Owner
-                <ExternalLink className="w-4 h-4" />
-              </a>
-              <a 
-                href="https://yahyaux.web.id" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-sm font-semibold py-3 px-4 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
-              >
-                <Globe className="w-4 h-4 text-agritiva-emerald" />
-                yahyaux.web.id
-              </a>
-            </div>
+            <a 
+              href="https://yahyaux.web.id" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="shrink-0 flex items-center justify-center gap-1.5 bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 text-xs font-medium py-1.5 px-3 rounded-lg transition-all"
+            >
+              <Globe className="w-3.5 h-3.5 text-agritiva-emerald" />
+              Lihat Profil Kreator
+            </a>
           </div>
         </div>
       </DialogContent>
