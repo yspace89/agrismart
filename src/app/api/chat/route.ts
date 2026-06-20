@@ -154,6 +154,10 @@ Contoh: "Maaf yaa, untuk pertanyaan itu aku belum bisa bantu jawab nih 🙏 Tapi
 - Jika kondisi memerlukan penanganan medis/profesional berat, sarankan untuk konsultasi langsung dengan dokter hewan atau ahli agronomi terdekat.
 `;
 
+    if (!process.env.SUMOPOD_API_KEY) {
+      throw new Error('API Key AI (SUMOPOD_API_KEY) belum di-setting di Vercel Environment Variables.');
+    }
+
     const result = streamText({
       // Model deepseek-v4-flash via SumoPod — paling murah & efisien
       model: sumopod('deepseek-v4-flash'),
