@@ -53,17 +53,17 @@ export function RegisterPopup({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="bg-slate-50/80 rounded-xl p-3.5 border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <p className="text-xs text-slate-500 leading-tight">
-              Ingin membuat aplikasi sistem cerdas untuk bisnis Anda?
+            <p className="text-xs text-slate-600 font-medium leading-tight">
+              Butuh solusi sistem cerdas kustom untuk perusahaan Anda?
             </p>
             <a 
               href="https://yahyaux.web.id" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="shrink-0 flex items-center justify-center gap-1.5 bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 text-xs font-medium py-1.5 px-3 rounded-lg transition-all"
+              className="shrink-0 flex items-center justify-center gap-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold py-2 px-3.5 rounded-lg transition-all shadow-sm"
             >
               <Globe className="w-3.5 h-3.5 text-agritiva-emerald" />
-              Lihat Profil Kreator
+              Kunjungi Website Owner
             </a>
           </div>
         </div>
