@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Bot, ExternalLink, ShieldCheck, Sprout } from "lucide-react"
+import { Bot, ExternalLink, ShieldCheck, Globe } from "lucide-react"
 
 export function RegisterPopup({ children }: { children: React.ReactNode }) {
   return (
@@ -44,17 +44,28 @@ export function RegisterPopup({ children }: { children: React.ReactNode }) {
 
           <div className="pt-2">
             <p className="text-xs text-slate-500 mb-3 text-center">
-              Tertarik menjadi mitra bisnis kami?
+              Tertarik menjadi mitra atau melihat portfolio kreator?
             </p>
-            <a 
-              href="https://wa.me/6289606710829" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-semibold py-3.5 px-4 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
-            >
-              Hubungi Owner via WhatsApp
-              <ExternalLink className="w-4 h-4 ml-1" />
-            </a>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a 
+                href="https://wa.me/6289606710829" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white text-sm font-semibold py-3 px-4 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
+              >
+                WhatsApp Owner
+                <ExternalLink className="w-4 h-4" />
+              </a>
+              <a 
+                href="https://yahyaux.web.id" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-sm font-semibold py-3 px-4 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+              >
+                <Globe className="w-4 h-4 text-agritiva-emerald" />
+                yahyaux.web.id
+              </a>
+            </div>
           </div>
         </div>
       </DialogContent>
