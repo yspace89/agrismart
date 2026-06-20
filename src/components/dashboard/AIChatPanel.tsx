@@ -102,6 +102,12 @@ export function AIChatPanel() {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
+        
+        // Deteksi jika server Vercel/Next.js malah nge-stream error HTML/RSC payload
+        if (fullText.length === 0 && (chunk.trim().startsWith('<!DOCTYPE') || chunk.trim().startsWith('["$","'))) {
+          throw new Error('API Key SumoPod di Vercel tidak valid atau salah ketik (ada spasi/tanda kutip). Harap periksa Vercel Environment Variables dan redeploy.');
+        }
+
         fullText += chunk;
         setStreamingText(fullText);
       }
