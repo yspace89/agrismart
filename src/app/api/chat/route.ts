@@ -79,7 +79,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Ambil konteks tanaman pengguna
-    let plants = [];
+    let plants: { name: string; species?: string; status?: string }[] = [];
     if (user) {
       const { data } = await supabase
         .from('plants')
