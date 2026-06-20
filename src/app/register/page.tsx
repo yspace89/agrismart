@@ -19,21 +19,14 @@ export default async function RegisterPage({
       <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none opacity-60 mix-blend-multiply" style={{background: 'radial-gradient(circle, #f5d4be 0%, transparent 70%)'}} />
       <div className="absolute top-[40%] left-[60%] w-[300px] h-[300px] rounded-full blur-[80px] pointer-events-none opacity-40 mix-blend-multiply" style={{background: 'radial-gradient(circle, #c8e1ff 0%, transparent 70%)'}} />
 
-      {/* Logo mark */}
-      <div className="z-10 mb-8 flex flex-col items-center">
-        <div className="relative mb-6">
-          <div className="absolute inset-0 rounded-3xl blur-2xl opacity-40" style={{background: 'linear-gradient(135deg, #40916c, #e09e7e)'}} />
-          <div className="relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-soft glass-panel-heavy" style={{background: 'linear-gradient(135deg, #1b4332 20%, #10b981 100%)'}}>
-            <span className="text-white font-black text-3xl tracking-tighter select-none">A</span>
-          </div>
-        </div>
-        <h1 className="text-2xl font-black tracking-tighter text-[#1b4332]">agritiva</h1>
-        <p className="text-[10px] uppercase tracking-[0.3em] font-bold mt-2 text-[#40916c]">Smart Farming</p>
-      </div>
 
-      <Card className="w-full max-w-md shadow-soft z-10 glass-panel-heavy border-white/50 rounded-2xl overflow-hidden">
-        <CardHeader className="space-y-1 pb-6 pt-6">
-          <CardTitle className="text-xl font-black text-slate-800 text-center tracking-tight">Daftar Akun Baru</CardTitle>
+
+      <Card className="w-full max-w-md shadow-soft z-10 glass-panel-heavy border-white/50 rounded-2xl overflow-hidden mt-8 md:mt-0">
+        <CardHeader className="space-y-1 pb-6 pt-8 flex flex-col items-center">
+          <div className="relative w-40 h-40 flex items-center justify-center mb-4">
+            <img src="/logo.png" alt="Agritiva Logo" className="w-full h-full object-contain" />
+          </div>
+          <CardTitle className="text-2xl font-black text-slate-800 text-center tracking-tight">Buat Akun Baru</CardTitle>
           <CardDescription className="text-center text-slate-500 font-medium">
             Gabung ke Agritiva dengan kode undangan
           </CardDescription>

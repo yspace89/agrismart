@@ -19,6 +19,7 @@ import { UserModeProvider } from "@/contexts/UserModeContext";
 import { BottomBar } from "@/components/dashboard/BottomBar";
 import { TopBar } from "@/components/dashboard/TopBar";
 import { AIChatPanel } from "@/components/dashboard/AIChatPanel";
+import { MainContentWrapper } from "@/components/dashboard/MainContentWrapper";
 
 export default function RootLayout({
   children,
@@ -33,9 +34,9 @@ export default function RootLayout({
             <Sidebar />
             <div className="flex-1 flex flex-col h-full overflow-hidden">
               <TopBar />
-              <main className="flex-1 overflow-y-auto pb-24 md:pb-0 px-4 md:px-8 py-6">
+              <MainContentWrapper>
                 {children}
-              </main>
+              </MainContentWrapper>
             </div>
             <BottomBar />
             <AIChatPanel />

@@ -10,6 +10,8 @@ export function BottomBar() {
   const pathname = usePathname();
   const { mode } = useUserMode();
 
+  if (['/login', '/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
+
   if (pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname === '/update-password') {
     return null;
   }

@@ -6,6 +6,7 @@ import { X, Send, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useUserMode } from '@/contexts/UserModeContext';
+import { usePathname } from 'next/navigation';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -13,8 +14,11 @@ interface ChatMessage {
 }
 
 export function AIChatPanel() {
-  const [isOpen, setIsOpen] = useState(false);
   const { mode } = useUserMode();
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (['/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -41,6 +45,16 @@ export function AIChatPanel() {
     e.preventDefault();
     const userMessage = input.trim();
     if (!userMessage || isLoading) return;
+
+    // Pembatasan 20 pesan untuk guest (di halaman login)
+    if (pathname === '/login') {
+      const guestCount = parseInt(localStorage.getItem('guest_chat_count') || '0', 10);
+      if (guestCount >= 20) {
+        setError('Batas maksimal percakapan tamu (20 pesan) telah tercapai. Silakan login untuk melanjutkan ngobrol bersama Tiva.');
+        return;
+      }
+      localStorage.setItem('guest_chat_count', (guestCount + 1).toString());
+    }
 
     // Tambahkan pesan user ke daftar
     const newMessages: ChatMessage[] = [
@@ -120,12 +134,15 @@ export function AIChatPanel() {
         onClick={() => setIsOpen(true)}
         aria-label="Buka Tanya Tani AI"
         className={cn(
-          'fixed bottom-[84px] right-4 md:bottom-8 md:right-8 w-12 h-12 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 z-[60] hover:scale-110 text-white',
-          accentColor,
-          isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
+          'fixed bottom-[84px] right-4 md:bottom-8 md:right-8 rounded-full shadow-2xl transition-all duration-300 z-[60] hover:scale-110 hover:-translate-y-2 group',
+          isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100 animate-bounce'
         )}
+        style={{ animationDuration: '3s' }}
       >
-        <img src="/tiva-avatar.png" alt="Tiva" className="w-8 h-8 rounded-full object-cover" />
+        <div className="relative">
+          <img src="/tiva-avatar.png" alt="Tiva" className="w-16 h-16 rounded-full object-cover shadow-[0_0_20px_rgba(16,185,129,0.3)] border-2 border-white group-hover:border-agritiva-emerald group-hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all" />
+          <span className="absolute bottom-0.5 right-0.5 w-4 h-4 bg-[#25D366] border-2 border-white rounded-full animate-pulse" />
+        </div>
       </button>
 
       {/* Overlay for mobile */}

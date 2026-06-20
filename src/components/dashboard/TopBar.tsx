@@ -6,11 +6,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { ModeSwitcherModal } from "./ModeSwitcherModal";
+import { usePathname } from "next/navigation";
 
 export function TopBar() {
   const { mode } = useUserMode();
   const [isModeModalOpen, setIsModeModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<{ email?: string, name?: string }>({});
+  const pathname = usePathname();
+
+  if (['/login', '/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
 
   useEffect(() => {
     async function loadUser() {

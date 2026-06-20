@@ -22,8 +22,11 @@ const navItemsGarden = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { mode, toggleMode } = useUserMode();
+  const { mode } = useUserMode();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+
+  if (['/login', '/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
 
   useEffect(() => {
     // Jangan daftarkan service worker di halaman auth untuk menghindari error redirect

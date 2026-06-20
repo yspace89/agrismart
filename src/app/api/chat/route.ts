@@ -11,58 +11,82 @@ const sumopod = createOpenAI({
   baseURL: process.env.SUMOPOD_BASE_URL || 'https://ai.sumopod.com/v1',
 });
 
+// In-memory rate limiting map for guests
+// Note: In serverless environments this resets on cold starts.
+// For robust production use Redis/Upstash.
+const guestIpRateLimit = new Map<string, number>();
+
 export async function POST(req: Request) {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
+    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const currentCount = guestIpRateLimit.get(ip) || 0;
+      if (currentCount >= 20) {
+        return NextResponse.json({ error: 'Batas maksimal percakapan tamu (20 pesan) telah tercapai. Silakan daftar dan login.' }, { status: 429 });
+      }
+      guestIpRateLimit.set(ip, currentCount + 1);
     }
 
-    // 1. Dapatkan profil dan status langganan
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('subscription_status, full_name')
-      .eq('id', user.id)
-      .single();
+    let isPro = false;
+    let usageData = null;
+    let userProfile = null;
 
-    const isPro = profile?.subscription_status === 'pro';
+    if (user) {
+      // 1. Dapatkan profil dan status langganan
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('subscription_status, full_name')
+        .eq('id', user.id)
+        .single();
+      
+      userProfile = profile;
+      isPro = profile?.subscription_status === 'pro';
 
-    // 2. Rate Limiting untuk akun Free
-    const today = new Date().toISOString().split('T')[0];
+      // 2. Rate Limiting untuk akun Free
+      const today = new Date().toISOString().split('T')[0];
 
-    const { data: usageData } = await supabase
-      .from('ai_usage')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('usage_date', today)
-      .single();
-
-    if (!isPro && usageData && usageData.query_count >= 10) {
-      return NextResponse.json(
-        { error: 'Batas kuota harian (10 pertanyaan) telah habis. Upgrade ke Pro untuk akses tanpa batas.' },
-        { status: 429 }
-      );
-    }
-
-    // 3. Increment penggunaan
-    if (usageData) {
-      await supabase
+      const { data: currentUsage } = await supabase
         .from('ai_usage')
-        .update({ query_count: usageData.query_count + 1, updated_at: new Date().toISOString() })
-        .eq('id', usageData.id);
-    } else {
-      await supabase
-        .from('ai_usage')
-        .insert({ user_id: user.id, usage_date: today, query_count: 1 });
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('usage_date', today)
+        .single();
+      
+      usageData = currentUsage;
+
+      if (!isPro && usageData && usageData.query_count >= 10) {
+        return NextResponse.json(
+          { error: 'Batas kuota harian (10 pertanyaan) telah habis. Upgrade ke Pro untuk akses tanpa batas.' },
+          { status: 429 }
+        );
+      }
+
+      // 3. Increment penggunaan
+      if (usageData) {
+        await supabase
+          .from('ai_usage')
+          .update({ query_count: usageData.query_count + 1, updated_at: new Date().toISOString() })
+          .eq('id', usageData.id);
+      } else {
+        await supabase
+          .from('ai_usage')
+          .insert({ user_id: user.id, usage_date: today, query_count: 1 });
+      }
     }
 
     // 4. Ambil konteks tanaman pengguna
-    const { data: plants } = await supabase
-      .from('plants')
-      .select('name, species, status')
-      .eq('user_id', user.id);
+    let plants = [];
+    if (user) {
+      const { data } = await supabase
+        .from('plants')
+        .select('name, species, status')
+        .eq('user_id', user.id);
+      plants = data || [];
+    }
 
     // 5. Parse body — format plain: { messages: [{role, content}] }
     const body = await req.json();
@@ -76,10 +100,12 @@ export async function POST(req: Request) {
               `- ${p.name} (Spesies: ${p.species || 'Tidak diketahui'}, Status: ${p.status || '-'})`
             )
             .join('\n')}`
-        : 'Pengguna saat ini belum memiliki tanaman di kebunnya.';
+        : user 
+            ? 'Pengguna saat ini belum memiliki tanaman di kebunnya.'
+            : 'Pengguna saat ini adalah tamu (belum login). Ajak mereka untuk daftar ke Agritiva untuk menikmati fitur lengkap seperti Pencatatan Tanaman, Manajemen Keuangan, dan Pengingat Cerdas.';
 
     const systemPrompt = `Anda adalah **Tiva**, asisten AI pertanian & peternakan cerdas dari platform Agritiva.
-Nama Pengguna: ${profile?.full_name || 'Petani'}.
+Nama Pengguna: ${userProfile?.full_name || 'Tamu / Petani'}.
 Status Akun: ${isPro ? 'Pro (Agribisnis/Komersial)' : 'Garden (Hobi/Personal)'}.
 
 IDENTITAS & KEPRIBADIAN:
