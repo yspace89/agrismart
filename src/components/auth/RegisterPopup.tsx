@@ -12,10 +12,8 @@ import { Bot, ExternalLink, ShieldCheck, Globe } from "lucide-react"
 export function RegisterPopup({ children }: { children: React.ReactNode }) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <button className="font-bold text-agritiva-emerald transition-colors hover:text-agritiva-green focus:outline-none focus:underline bg-transparent border-none p-0">
-          {children}
-        </button>
+      <DialogTrigger className="font-bold text-agritiva-emerald transition-colors hover:text-agritiva-green focus:outline-none focus:underline bg-transparent border-none p-0 cursor-pointer">
+        {children}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md p-6 overflow-hidden border border-agritiva-green/10 bg-white/95 backdrop-blur-xl shadow-2xl rounded-2xl">
         {/* Minimalist Header */}
