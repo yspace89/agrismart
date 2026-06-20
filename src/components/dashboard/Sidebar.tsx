@@ -26,8 +26,6 @@ export function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  if (['/login', '/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
-
   useEffect(() => {
     // Jangan daftarkan service worker di halaman auth untuk menghindari error redirect
     if (pathname === '/login' || pathname === '/register' || pathname === '/forgot-password' || pathname === '/update-password') {
@@ -47,6 +45,8 @@ export function Sidebar() {
       });
     }
   }, [pathname]);
+
+  if (['/login', '/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
 
   const subscribeToPush = async () => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {

@@ -1,22 +1,17 @@
 import { createClient } from '@/lib/supabase-server';
 import { NextResponse } from 'next/server';
 
-function calcNextSendAt(frequencyDays: number, notificationHour: number): string {
+function calcNextSendAt(frequencyDays: number, notificationHour: number, notificationMinute: number): string {
   const now = new Date();
-  // Jadwalkan untuk hari ini atau besok tergantung jam saat ini vs jam notif (WIB = UTC+7)
-  const wibOffset = 7 * 60; // menit
-  const nowWib = new Date(now.getTime() + wibOffset * 60 * 1000);
+  const currentWibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+  const targetWibTime = new Date(currentWibTime);
+  targetWibTime.setUTCHours(notificationHour, notificationMinute, 0, 0);
   
-  const nextSend = new Date(nowWib);
-  nextSend.setHours(notificationHour, 0, 0, 0);
-  
-  // Kalau jam notif hari ini sudah lewat, jadwalkan besok
-  if (nextSend <= nowWib) {
-    nextSend.setDate(nextSend.getDate() + 1);
+  if (targetWibTime <= currentWibTime) {
+    targetWibTime.setUTCDate(targetWibTime.getUTCDate() + Math.max(1, frequencyDays));
   }
   
-  // Convert back to UTC
-  return new Date(nextSend.getTime() - wibOffset * 60 * 1000).toISOString();
+  return new Date(targetWibTime.getTime() - 7 * 60 * 60 * 1000).toISOString();
 }
 
 // GET /api/reminders?plant_id=xxx
@@ -50,13 +45,14 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { plant_id, activity_type, frequency_days, notification_hour } = body;
+  const { plant_id, activity_type, frequency_days, notification_hour, notification_minute } = body;
 
   if (!plant_id || !activity_type || !frequency_days || notification_hour === undefined) {
     return NextResponse.json({ error: 'Data tidak lengkap.' }, { status: 400 });
   }
 
-  const nextSendAt = calcNextSendAt(Number(frequency_days), Number(notification_hour));
+  const minute = notification_minute ?? 0;
+  const nextSendAt = calcNextSendAt(Number(frequency_days), Number(notification_hour), Number(minute));
 
   const { data, error } = await supabase
     .from('plant_reminders')
@@ -66,6 +62,7 @@ export async function POST(req: Request) {
       activity_type,
       frequency_days: Number(frequency_days),
       notification_hour: Number(notification_hour),
+      notification_minute: Number(minute),
       is_active: true,
       next_send_at: nextSendAt,
     })
@@ -97,12 +94,16 @@ export async function PATCH(req: Request) {
   if (body.notification_hour !== undefined) {
     updates.notification_hour = Number(body.notification_hour);
   }
+  if (body.notification_minute !== undefined) {
+    updates.notification_minute = Number(body.notification_minute);
+  }
 
   // Recalculate next_send_at if schedule changed
-  if (body.frequency_days || body.notification_hour !== undefined) {
+  if (body.frequency_days || body.notification_hour !== undefined || body.notification_minute !== undefined) {
     const freq = body.frequency_days || 1;
     const hour = body.notification_hour ?? 7;
-    updates.next_send_at = calcNextSendAt(Number(freq), Number(hour));
+    const minute = body.notification_minute ?? 0;
+    updates.next_send_at = calcNextSendAt(Number(freq), Number(hour), Number(minute));
   }
 
   const { data, error } = await supabase

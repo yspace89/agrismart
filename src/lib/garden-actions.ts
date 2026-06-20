@@ -33,10 +33,13 @@ export async function addPlant(formData: FormData) {
   if (photoFile && photoFile.size > 0) {
     const fileExt = photoFile.name.split('.').pop() || 'jpg';
     const fileName = `${user.id}/plants/${Date.now()}.${fileExt}`;
+    const fileBuffer = await photoFile.arrayBuffer();
 
     const { error: uploadError, data: uploadData } = await supabase.storage
       .from('plant-photos')
-      .upload(fileName, photoFile);
+      .upload(fileName, fileBuffer, {
+        contentType: photoFile.type,
+      });
 
     if (uploadError) {
       console.error('Error uploading plant photo:', uploadError);
@@ -109,10 +112,13 @@ export async function addPlantLog(formData: FormData) {
   if (photoFile && photoFile.size > 0) {
     const fileExt = photoFile.name.split('.').pop();
     const fileName = `${user.id}/${plantId}/${Date.now()}.${fileExt}`;
+    const fileBuffer = await photoFile.arrayBuffer();
 
     const { error: uploadError, data: uploadData } = await supabase.storage
       .from('plant-photos')
-      .upload(fileName, photoFile);
+      .upload(fileName, fileBuffer, {
+        contentType: photoFile.type,
+      });
 
     if (uploadError) {
       console.error('Error uploading photo:', uploadError);
@@ -138,6 +144,72 @@ export async function addPlantLog(formData: FormData) {
   if (error) {
     console.error('Error adding plant log:', error);
     throw new Error('Failed to add log');
+  }
+
+  revalidatePath(`/plants/${plantId}`);
+}
+
+export async function updatePlantVitals(
+  plantId: string, 
+  waterFrequency: number, 
+  lightRequirement: string, 
+  plantedDate: string,
+  autoReminder?: { enabled: boolean; hour?: number; minute?: number; next_send_at?: string }
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { error } = await supabase
+    .from('plants')
+    .update({ 
+      water_frequency_days: waterFrequency,
+      light_requirement: lightRequirement,
+      planted_date: plantedDate || null
+    })
+    .eq('id', plantId);
+
+  if (error) {
+    console.error('Error updating plant vitals:', error);
+    throw new Error('Failed to update vitals');
+  }
+
+  if (autoReminder && user) {
+    if (autoReminder.enabled && autoReminder.hour !== undefined) {
+      // Upsert Siram reminder
+      const { data: existing } = await supabase
+        .from('reminders')
+        .select('id')
+        .eq('plant_id', plantId)
+        .eq('activity_type', 'Siram')
+        .maybeSingle();
+
+      if (existing) {
+        await supabase.from('reminders').update({
+          frequency_days: waterFrequency,
+          notification_hour: autoReminder.hour,
+          notification_minute: autoReminder.minute || 0,
+          next_send_at: autoReminder.next_send_at || null,
+          is_active: true
+        }).eq('id', existing.id);
+      } else {
+        await supabase.from('reminders').insert({
+          user_id: user.id,
+          plant_id: plantId,
+          activity_type: 'Siram',
+          frequency_days: waterFrequency,
+          notification_hour: autoReminder.hour,
+          notification_minute: autoReminder.minute || 0,
+          next_send_at: autoReminder.next_send_at || null,
+          is_active: true
+        });
+      }
+    } else {
+      // Delete existing Siram reminder if toggled off
+      await supabase.from('reminders')
+        .delete()
+        .eq('plant_id', plantId)
+        .eq('activity_type', 'Siram');
+    }
   }
 
   revalidatePath(`/plants/${plantId}`);

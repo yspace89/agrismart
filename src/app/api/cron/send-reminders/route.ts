@@ -8,35 +8,61 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export const maxDuration = 30;
+// Vercel Cron jobs dapat berjalan hingga 300 detik
+export const maxDuration = 60;
 
+/**
+ * Hitung next_send_at berikutnya setelah notif terkirim.
+ * Menghormati notification_hour & notification_minute dalam WIB (UTC+7).
+ */
+function calcNextSendAt(frequencyDays: number, notificationHour: number, notificationMinute: number): string {
+  const now = new Date();
+  const currentWibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+  const targetWibTime = new Date(currentWibTime);
+  targetWibTime.setUTCHours(notificationHour, notificationMinute, 0, 0);
+  
+  if (targetWibTime <= currentWibTime) {
+    targetWibTime.setUTCDate(targetWibTime.getUTCDate() + Math.max(1, frequencyDays));
+  }
+  
+  return new Date(targetWibTime.getTime() - 7 * 60 * 60 * 1000).toISOString();
+}
+
+/**
+ * GET /api/cron/send-reminders
+ * Dipanggil oleh Vercel Cron setiap jam, atau manual via ?secret=CRON_SECRET
+ */
 export async function GET(req: Request) {
+  const startTime = Date.now();
+
   try {
-    // Amankan endpoint agar hanya bisa dipanggil oleh Vercel Cron atau admin
+    // ── Autentikasi ──────────────────────────────────────────────────────────
     const cronSecret = process.env.CRON_SECRET;
     const { searchParams } = new URL(req.url);
-    const secret = searchParams.get('secret');
+    const secretParam = searchParams.get('secret');
     const authHeader = req.headers.get('authorization');
 
-    const isVercelCron = authHeader === `Bearer ${cronSecret}`;
-    const isManualTest = secret && secret === cronSecret;
+    const isVercelCron = cronSecret && authHeader === `Bearer ${cronSecret}`;
+    const isManualTest = cronSecret && secretParam === cronSecret;
 
     if (cronSecret && !isVercelCron && !isManualTest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Setup VAPID
-    webpush.setVapidDetails(
-      'mailto:admin@agritiva.app',
-      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
-      process.env.VAPID_PRIVATE_KEY || ''
-    );
+    // ── Setup VAPID ───────────────────────────────────────────────────────────
+    const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
+    if (!vapidPublic || !vapidPrivate) {
+      console.error('[Cron] VAPID keys tidak dikonfigurasi');
+      return NextResponse.json({ error: 'VAPID keys not configured' }, { status: 500 });
+    }
+    webpush.setVapidDetails('mailto:admin@agritiva.app', vapidPublic, vapidPrivate);
 
-    // Ambil semua reminder yang sudah jatuh tempo
+    // ── Ambil reminder yang jatuh tempo ───────────────────────────────────────
     const now = new Date().toISOString();
     const { data: reminders, error: remindersError } = await supabaseAdmin
       .from('plant_reminders')
-      .select('*, plants(name, created_by)')
+      .select('*, plants(name)')
       .eq('is_active', true)
       .lte('next_send_at', now);
 
@@ -46,64 +72,79 @@ export async function GET(req: Request) {
     }
 
     if (!reminders || reminders.length === 0) {
-      return NextResponse.json({ message: 'Tidak ada reminder yang perlu dikirim.', checked_at: now });
+      return NextResponse.json({
+        message: 'Tidak ada reminder yang perlu dikirim.',
+        checked_at: now,
+        duration_ms: Date.now() - startTime,
+      });
     }
 
+    // ── Proses setiap reminder ────────────────────────────────────────────────
     let sentCount = 0;
-    const results = [];
+    let failedCount = 0;
+    const results: object[] = [];
 
     for (const reminder of reminders) {
       const userId = reminder.created_by;
       const plantName = reminder.plants?.name || 'Tanaman Anda';
       const activityType = reminder.activity_type;
+      const frequencyDays: number = reminder.frequency_days;
+      const notifHour: number = reminder.notification_hour;
+      const notifMinute: number = reminder.notification_minute ?? 0;
 
-      // Ambil push subscriptions user
-      const { data: subs } = await supabaseAdmin
+      // Ambil semua push subscriptions milik user
+      const { data: subs, error: subErr } = await supabaseAdmin
         .from('push_subscriptions')
-        .select('*')
+        .select('id, subscription')
         .eq('user_id', userId);
 
+      if (subErr) {
+        console.error(`[Cron] Gagal ambil subscriptions untuk user ${userId}:`, subErr.message);
+        results.push({ reminder_id: reminder.id, status: 'db_error', detail: subErr.message });
+        continue;
+      }
+
       if (!subs || subs.length === 0) {
-        results.push({ reminder_id: reminder.id, status: 'no_subscription' });
-        // Tetap update next_send_at walaupun tidak ada subscription
+        // Tidak ada device terdaftar, tetap update jadwal agar tidak terus looping
+        results.push({ reminder_id: reminder.id, plant: plantName, status: 'no_subscription' });
       } else {
         const payload = JSON.stringify({
-          title: `🌱 Waktunya Merawat!`,
-          body: `${activityType} untuk ${plantName} sudah dijadwalkan hari ini.`,
+          title: `🌿 Waktunya ${activityType}!`,
+          body: `Jangan lupa ${activityType.toLowerCase()} ${plantName} hari ini ya!`,
           url: `/plants/${reminder.plant_id}`,
+          icon: '/logo.png',
         });
 
         for (const sub of subs) {
+          // sub.subscription adalah PushSubscription JSON object
           try {
-            await webpush.sendNotification(
-              { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-              payload
-            );
+            await webpush.sendNotification(sub.subscription, payload);
             sentCount++;
           } catch (err: any) {
-            console.error('[Cron] Push error:', err.statusCode, sub.endpoint);
-            // Hapus subscription expired
+            console.error('[Cron] Push error:', err.statusCode, err.message);
+            failedCount++;
+            // Hapus subscription yang sudah expired / tidak valid
             if (err.statusCode === 410 || err.statusCode === 404) {
               await supabaseAdmin.from('push_subscriptions').delete().eq('id', sub.id);
+              console.log(`[Cron] Hapus expired subscription ${sub.id}`);
             }
           }
         }
-        results.push({ reminder_id: reminder.id, plant: plantName, activity: activityType, status: 'sent' });
+
+        results.push({
+          reminder_id: reminder.id,
+          plant: plantName,
+          activity: activityType,
+          subscriptions: subs.length,
+          status: 'processed',
+        });
       }
 
-      // Hitung next_send_at berikutnya
-      const nextSend = new Date();
-      nextSend.setDate(nextSend.getDate() + reminder.frequency_days);
-      // Set ke jam notifikasi di hari itu (UTC, notification_hour adalah WIB)
-      const hourUtc = (reminder.notification_hour - 7 + 24) % 24;
-      nextSend.setHours(hourUtc, 0, 0, 0);
-
+      // Update last_sent_at dan hitung next_send_at berikutnya
+      const nextSendAt = calcNextSendAt(frequencyDays, notifHour, notifMinute);
       await supabaseAdmin
         .from('plant_reminders')
-        .update({
-          last_sent_at: now,
-          next_send_at: nextSend.toISOString(),
-        })
+        .update({ last_sent_at: now, next_send_at: nextSendAt })
         .eq('id', reminder.id);
     }
 
@@ -111,8 +152,10 @@ export async function GET(req: Request) {
       success: true,
       total_reminders: reminders.length,
       notifications_sent: sentCount,
+      notifications_failed: failedCount,
       results,
       executed_at: now,
+      duration_ms: Date.now() - startTime,
     });
   } catch (err: any) {
     console.error('[Cron] Unexpected error:', err);

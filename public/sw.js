@@ -5,7 +5,8 @@ self.addEventListener('push', function (event) {
       body: data.body,
       icon: data.icon || '/icon-192.png',
       badge: '/icon-192.png',
-      vibrate: [100, 50, 100],
+      vibrate: [300, 100, 400, 100, 400, 100, 300], // Pola getar heboh ala alarm
+      requireInteraction: true, // Notif nggak hilang sendiri sebelum diklik/di-close
       data: {
         dateOfArrival: Date.now(),
         primaryKey: '2',
