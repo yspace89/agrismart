@@ -54,7 +54,7 @@ export function RegisterPopup({ children }: { children: React.ReactNode }) {
 
           <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-100 flex flex-col gap-3">
             <p className="text-xs text-slate-600 font-medium leading-relaxed">
-              Membutuhkan transformasi digital untuk kebutuhan bisnis Anda? Lihat profil owner kami untuk mengenal dan langkah awal menjalin kerjasama.
+              Membutuhkan <em>custom app</em> untuk kebutuhan transformasi digital dan efisiensi bisnis Anda? Lihat profil owner kami untuk mengenal dan langkah awal menjalin kerjasama.
             </p>
             <a 
               href="https://yahyaux.web.id" 
