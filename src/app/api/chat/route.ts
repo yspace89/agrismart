@@ -159,8 +159,8 @@ Contoh: "Maaf yaa, untuk pertanyaan itu aku belum bisa bantu jawab nih 🙏 Tapi
     }
 
     const result = streamText({
-      // Menggunakan gpt-4o-mini via SumoPod (model paling stabil & murah)
-      model: sumopod('gpt-4o-mini'),
+      // Model deepseek-v4-flash via SumoPod — paling murah & efisien
+      model: sumopod('deepseek-v4-flash'),
       system: systemPrompt,
       messages: rawMessages.map((m) => ({
         role: m.role,
