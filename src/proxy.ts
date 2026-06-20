@@ -64,7 +64,11 @@ export async function proxy(request: NextRequest) {
                       request.nextUrl.pathname.startsWith('/forgot-password') ||
                       request.nextUrl.pathname.startsWith('/update-password') ||
                       request.nextUrl.pathname.startsWith('/auth/callback')
-  const isWebhookRoute = request.nextUrl.pathname.startsWith('/api/webhook') || request.nextUrl.pathname.startsWith('/api/iot-simulate')
+  const isWebhookRoute = request.nextUrl.pathname.startsWith('/api/webhook') || 
+                          request.nextUrl.pathname.startsWith('/api/iot-simulate') ||
+                          request.nextUrl.pathname.startsWith('/api/chat') ||
+                          request.nextUrl.pathname.startsWith('/api/ai-test') ||
+                          request.nextUrl.pathname.startsWith('/api/push')
 
   if (!user && !isAuthRoute && !isWebhookRoute) {
     const url = request.nextUrl.clone()
