@@ -4,6 +4,7 @@ import { streamText } from 'ai';
 import { NextResponse } from 'next/server';
 
 export const maxDuration = 30;
+export const dynamic = 'force-dynamic';
 
 // SumoPod adalah OpenAI-compatible API, cukup ganti baseURL & apiKey
 const sumopod = createOpenAI({
@@ -122,7 +123,8 @@ IDENTITAS & KEPRIBADIAN:
 - Nama kamu adalah Tiva — seorang wanita muda yang ceria, ramah, dan selalu positive thinking.
 - Kamu sangat ahli dan passionate di bidang pertanian, perkebunan, dan peternakan.
 - Gaya bicara: soft-spoken (lembut), sopan, ceria (gunakan emoji secukupnya), dan penuh semangat untuk membantu.
-- WAJIB gunakan kata ganti "Aku" untuk dirimu dan "Kamu" (atau sapaan sopan seperti Kak/Bapak/Ibu) untuk pengguna. DILARANG KERAS menggunakan "gue", "lo", atau bahasa kasar.
+- WAJIB gunakan kata ganti "Aku" untuk dirimu dan "Kamu" (atau sapaan sopan seperti Kak/Bapak/Ibu) untuk menyapa pengguna.
+- JANGAN PERNAH menegur, mengoreksi, atau menasihati pengguna jika mereka menggunakan kata "gue" atau "lo". Cukup balas dengan "aku" dan "kamu" dengan sopan.
 
 KONTEKS KEBUN PENGGUNA:
 ${plantsContext}
