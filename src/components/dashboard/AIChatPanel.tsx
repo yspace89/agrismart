@@ -134,8 +134,10 @@ export function AIChatPanel() {
       setStreamingText('');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Terjadi kesalahan.';
-      if (message.includes('429') || message.includes('kuota')) {
+      if (message.includes('kuota')) {
         setError('Limit pertanyaan harian (10x) sudah habis. Upgrade ke Pro ya!');
+      } else if (message.includes('429')) {
+        setError('Sistem AI sedang sibuk (terlalu banyak permintaan). Mohon tunggu sekitar 1 menit dan coba lagi ya Kak! 🙏');
       } else {
         setError(message || 'Gagal menghubungi AI. Coba lagi.');
       }
