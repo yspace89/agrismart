@@ -13,7 +13,7 @@ import { logout } from "@/app/login/actions";
 export function TopBar() {
   const { mode } = useUserMode();
   const [isModeModalOpen, setIsModeModalOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<{ email?: string, name?: string }>({});
+  const [userProfile, setUserProfile] = useState<{ email?: string, name?: string, isLoading?: boolean }>({ isLoading: true });
   const pathname = usePathname();
 
 
@@ -30,8 +30,11 @@ export function TopBar() {
         
         setUserProfile({
           email: user.email,
-          name: data?.full_name || "Petani Agritiva"
+          name: data?.full_name || "Petani Agritiva",
+          isLoading: false
         });
+      } else {
+        setUserProfile({ isLoading: false });
       }
     }
     loadUser();
@@ -74,8 +77,17 @@ export function TopBar() {
             </PopoverTrigger>
             <PopoverContent align="end" className="w-64 p-2 rounded-2xl shadow-xl border-slate-100">
               <div className="p-3 border-b border-slate-100 mb-2">
-                <p className="font-bold text-slate-800 truncate">{userProfile.name}</p>
-                <p className="text-xs text-slate-500 truncate">{userProfile.email}</p>
+                {userProfile.isLoading ? (
+                  <div className="space-y-2 animate-pulse">
+                    <div className="h-4 bg-slate-200 rounded w-2/3"></div>
+                    <div className="h-3 bg-slate-200 rounded w-full"></div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="font-bold text-slate-800 truncate">{userProfile.name || "Petani Agritiva"}</p>
+                    <p className="text-xs text-slate-500 truncate">{userProfile.email || "Sesi habis"}</p>
+                  </>
+                )}
               </div>
 
               <div className="space-y-1">
