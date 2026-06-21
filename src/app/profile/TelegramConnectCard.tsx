@@ -66,14 +66,24 @@ export function TelegramConnectCard({ userId, telegramChatId }: TelegramConnectC
               <div>
                 <p className="text-sm font-bold text-slate-800">Buka Bot Telegram Agritiva</p>
                 <p className="text-sm text-slate-500">Cari <b>@{botUsername}</b> di Telegram atau klik tombol di bawah.</p>
-                <a 
-                  href={`https://t.me/${botUsername}?start=${userId}`}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 mt-2 text-sm font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 px-4 py-2 rounded-xl transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4" /> Buka Telegram
-                </a>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <a 
+                    href={`https://t.me/${botUsername}?start=${userId}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 px-4 py-2 rounded-xl transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" /> Buka Aplikasi
+                  </a>
+                  <a 
+                    href={`https://web.telegram.org/a/#?tgaddr=tg%3A%2F%2Fresolve%3Fdomain%3D${botUsername}%26start%3D${userId}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 px-4 py-2 rounded-xl border border-slate-200 transition-colors"
+                  >
+                    <Bot className="w-4 h-4" /> Buka di Web
+                  </a>
+                </div>
               </div>
             </div>
 
