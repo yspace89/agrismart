@@ -53,14 +53,16 @@ export async function POST(req: Request) {
 
     if (user) {
       // 1. Dapatkan profil dan status langganan
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
-        .select('subscription_status, full_name')
+        .select('user_mode, full_name')
         .eq('id', user.id)
         .single();
       
+      if (error) console.error("Error fetching profile:", error);
+      
       userProfile = profile;
-      isPro = profile?.subscription_status === 'pro';
+      isPro = profile?.user_mode === 'pro';
       
       if (!userProfile?.full_name && user.user_metadata?.full_name) {
         if (!userProfile) userProfile = {};
