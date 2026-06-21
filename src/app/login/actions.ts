@@ -35,7 +35,7 @@ export async function login(formData: FormData) {
     redirect('/login?error=' + encodeURIComponent('Email dan password wajib diisi.'))
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const { data: authData, error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
     // [VULN-06 FIX] Log error asli di server untuk debugging
@@ -47,19 +47,15 @@ export async function login(formData: FormData) {
 
   // Redirect based on user_mode
   let targetUrl = '/';
-  if (data.email) {
-    // Need to use the server client to query the profile because we just logged in
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_mode')
-        .eq('id', user.id)
-        .single();
-      
-      if (profile?.user_mode === 'garden') {
-        targetUrl = '/garden';
-      }
+  if (authData?.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('user_mode')
+      .eq('id', authData.user.id)
+      .single();
+    
+    if (profile?.user_mode === 'garden') {
+      targetUrl = '/garden';
     }
   }
 
