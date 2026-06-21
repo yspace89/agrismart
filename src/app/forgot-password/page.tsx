@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { resetPassword } from './actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { SubmitButton } from '@/components/ui/submit-button'
 import { Input } from '@/components/ui/input'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
 
@@ -61,8 +61,8 @@ export default async function ForgotPasswordPage({
               />
             </div>
             
-            <Button 
-              type="submit" 
+            <SubmitButton 
+              pendingText="Mengirim..."
               className="w-full text-white font-bold text-sm h-12 rounded-xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               style={{
                 background: 'linear-gradient(135deg, #1b4332, #10b981)',
@@ -70,7 +70,7 @@ export default async function ForgotPasswordPage({
               }}
             >
               Kirim Tautan Reset
-            </Button>
+            </SubmitButton>
           </form>
 
           <div className="mt-8 text-center text-sm font-medium text-slate-500">

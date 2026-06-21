@@ -2,7 +2,7 @@ import { login } from './actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
-import { Button } from '@/components/ui/button'
+import { SubmitButton } from '@/components/ui/submit-button'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import { RegisterPopup } from '@/components/auth/RegisterPopup'
 
@@ -80,8 +80,8 @@ export default async function LoginPage({
               />
             </div>
 
-            <Button 
-              type="submit" 
+            <SubmitButton 
+              pendingText="Memproses..."
               className="w-full text-white font-bold text-sm h-12 rounded-xl mt-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               style={{
                 background: 'linear-gradient(135deg, #1b4332, #10b981)',
@@ -89,7 +89,7 @@ export default async function LoginPage({
               }}
             >
               Masuk Sekarang
-            </Button>
+            </SubmitButton>
           </form>
 
           <div className="mt-8 text-center text-sm font-medium text-slate-500">
