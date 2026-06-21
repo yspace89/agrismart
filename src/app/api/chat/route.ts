@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
     let isPro = false;
     let usageData = null;
-    let userProfile = null;
+    let userProfile: any = null;
 
     if (user) {
       // 1. Dapatkan profil dan status langganan
@@ -61,6 +61,11 @@ export async function POST(req: Request) {
       
       userProfile = profile;
       isPro = profile?.subscription_status === 'pro';
+      
+      if (!userProfile?.full_name && user.user_metadata?.full_name) {
+        if (!userProfile) userProfile = {};
+        userProfile.full_name = user.user_metadata.full_name;
+      }
 
       // 2. Rate Limiting untuk akun Free
       const today = new Date().toISOString().split('T')[0];
@@ -131,7 +136,22 @@ export async function POST(req: Request) {
             ? 'Pengguna saat ini belum memiliki tanaman di kebunnya.'
             : 'Pengguna saat ini adalah tamu (belum login). Ajak mereka untuk daftar ke Agritiva untuk menikmati fitur lengkap seperti Pencatatan Tanaman, Manajemen Keuangan, dan Pengingat Cerdas.';
 
+    // Format jam saat ini ke WIB
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('id-ID', {
+      timeZone: 'Asia/Jakarta',
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    const currentWibTime = formatter.format(now);
+
     const systemPrompt = `Anda adalah **Tiva**, asisten AI pertanian & peternakan cerdas dari platform Agritiva.
+Waktu saat ini: ${currentWibTime} WIB.
 Nama Pengguna: ${userProfile?.full_name || 'Tamu / Petani'}.
 Status Akun: ${isPro ? 'Pro (Agribisnis/Komersial)' : 'Garden (Hobi/Personal)'}.
 
