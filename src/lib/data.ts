@@ -1,6 +1,5 @@
-import { supabase } from "@/lib/supabase";
-
-export async function getDashboardStats() {
+import { createClient } from "@/lib/supabase-server";export async function getDashboardStats() {
+  const supabase = await createClient();
   // 1. Total Expenses (semua waktu)
   const { data: expenses } = await supabase.from("expenses").select("amount");
   const totalSpent = expenses?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
@@ -95,6 +94,7 @@ export async function getDashboardStats() {
 }
 
 export async function getYieldForecastData(seasonId?: string) {
+  const supabase = await createClient();
   let query = supabase
     .from("growth_logs")
     .select("*, planting_seasons(land_id, crop_name, start_date, estimated_harvest_date, target_yield_tons)")

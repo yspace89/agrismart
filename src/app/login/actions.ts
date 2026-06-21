@@ -45,8 +45,26 @@ export async function login(formData: FormData) {
     redirect('/login?error=' + encodeURIComponent(friendlyMessage))
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
+  // Redirect based on user_mode
+  let targetUrl = '/';
+  if (data.email) {
+    // Need to use the server client to query the profile because we just logged in
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_mode')
+        .eq('id', user.id)
+        .single();
+      
+      if (profile?.user_mode === 'garden') {
+        targetUrl = '/garden';
+      }
+    }
+  }
+
+  revalidatePath(targetUrl, 'layout')
+  redirect(targetUrl)
 }
 
 export async function logout() {
