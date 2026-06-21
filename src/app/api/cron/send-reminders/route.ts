@@ -104,11 +104,11 @@ export async function GET(req: Request) {
         continue;
       }
 
-      if (!subs || subs.length === 0) {
-        // Tidak ada device terdaftar, tetap update jadwal agar tidak terus looping
-        results.push({ reminder_id: reminder.id, plant: plantName, status: 'no_subscription' });
-      } else {
-        const payload = JSON.stringify({
+      if ((!subs || subs.length === 0) && true /* we will check telegram below */) {
+        // Will check telegram later
+      }
+      
+      const payload = JSON.stringify({
           title: `🌿 Waktunya ${activityType}!`,
           body: `Jangan lupa ${activityType.toLowerCase()} ${plantName} hari ini ya!`,
           url: `/plants/${reminder.plant_id}`,
@@ -131,14 +131,50 @@ export async function GET(req: Request) {
           }
         }
 
+        // --- NEW: TELEGRAM NOTIFICATION ---
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('telegram_chat_id, full_name')
+          .eq('id', userId)
+          .maybeSingle();
+
+        let telegramStatus = 'not_connected';
+        if (profile?.telegram_chat_id) {
+          try {
+            const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+            const text = `🌿 <b>Waktunya ${activityType}!</b>\n\nHalo ${profile.full_name || 'Petani'}, jangan lupa ${activityType.toLowerCase()} tanaman <b>${plantName}</b> Anda hari ini ya!`;
+            
+            const res = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                chat_id: profile.telegram_chat_id,
+                text,
+                parse_mode: "HTML",
+              }),
+            });
+            const result = await res.json();
+            if (result.ok) {
+              telegramStatus = 'sent';
+              sentCount++;
+            } else {
+              telegramStatus = 'error: ' + result.description;
+              failedCount++;
+            }
+          } catch (e: any) {
+            telegramStatus = 'error: ' + e.message;
+            failedCount++;
+          }
+        }
+
         results.push({
           reminder_id: reminder.id,
           plant: plantName,
           activity: activityType,
           subscriptions: subs.length,
+          telegram_status: telegramStatus,
           status: 'processed',
         });
-      }
 
       // Update last_sent_at dan hitung next_send_at berikutnya
       const nextSendAt = calcNextSendAt(frequencyDays, notifHour, notifMinute);

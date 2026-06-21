@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
 import { Button } from '@/components/ui/button'
-import { User, Phone, MapPin, KeyRound, AlertCircle, CheckCircle } from 'lucide-react'
+import { User, Phone, MapPin, KeyRound, AlertCircle, CheckCircle, MessageCircleCode, CheckCircle2 } from 'lucide-react'
 import { updateProfile, updatePassword } from './actions'
+import { TelegramConnectCard } from './TelegramConnectCard'
 
 export default async function ProfilePage({
   searchParams,
@@ -189,6 +190,10 @@ export default async function ProfilePage({
             </form>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-8">
+        <TelegramConnectCard userId={user.id} telegramChatId={profile?.telegram_chat_id} />
       </div>
     </div>
   )

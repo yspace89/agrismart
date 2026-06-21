@@ -29,6 +29,10 @@ const HELP_MESSAGE = `🌾 <b>Agritiva Bot — Panduan Perintah</b>
 <b>📋 Info Lahan:</b>
 • <code>LAHAN</code> — Daftar lahan aktif & status panen
 
+<b>⚙️ Pengaturan Akun:</b>
+• <code>/SAMBUNG [Kode]</code> — Sambungkan akun Agritiva
+• <code>/PUTUS</code> — Putus notifikasi Telegram
+
 Ketik <b>BANTUAN</b> untuk melihat panduan ini lagi.`;
 
 export async function POST(req: Request) {
@@ -54,7 +58,80 @@ export async function POST(req: Request) {
 
     // --- 1. START / BANTUAN COMMAND ---
     if (command === "/START" || command === "BANTUAN" || command === "HELP") {
-      await sendTelegramMessage(chatId, HELP_MESSAGE);
+      // Jika diklik lewat link seperti t.me/bot?start=uuid
+      if (command === "/START" && parts.length > 1) {
+        const payload = parts[1];
+        // Treat as SAMBUNG
+        parts[0] = "/SAMBUNG";
+        parts[1] = payload;
+      } else {
+        await sendTelegramMessage(chatId, HELP_MESSAGE);
+        return NextResponse.json({ ok: true });
+      }
+    }
+
+    // --- 1A. SAMBUNG COMMAND ---
+    if (parts[0].toUpperCase() === "/SAMBUNG") {
+      const userId = parts[1];
+      if (!userId || userId.length < 30) {
+        await sendTelegramMessage(chatId, "❌ Kode penyambungan tidak valid. Salin kode dari halaman Profil Agritiva Anda.");
+        return NextResponse.json({ ok: true });
+      }
+
+      // Periksa apakah user ada
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (!profile) {
+        await sendTelegramMessage(chatId, "❌ Akun tidak ditemukan. Pastikan Anda menyalin kode dengan benar.");
+        return NextResponse.json({ ok: true });
+      }
+
+      // Update telegram_chat_id
+      const { error } = await supabase
+        .from("profiles")
+        .update({ telegram_chat_id: String(chatId) })
+        .eq("id", userId);
+
+      if (error) {
+        console.error("[Webhook SAMBUNG] DB Error:", error.message);
+        await sendTelegramMessage(chatId, "❌ Gagal menyambungkan akun karena kesalahan sistem.");
+      } else {
+        await sendTelegramMessage(
+          chatId,
+          `✅ <b>Berhasil Terhubung!</b>\n\nHalo <b>${profile.full_name || "Petani"}</b>, notifikasi pengingat tanaman Anda kini akan dikirimkan ke Telegram ini.`
+        );
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    // --- 1B. PUTUS COMMAND ---
+    if (parts[0].toUpperCase() === "/PUTUS") {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .eq("telegram_chat_id", String(chatId))
+        .maybeSingle();
+
+      if (!profile) {
+        await sendTelegramMessage(chatId, "❌ Akun Telegram ini belum terhubung dengan akun Agritiva mana pun.");
+        return NextResponse.json({ ok: true });
+      }
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({ telegram_chat_id: null })
+        .eq("id", profile.id);
+
+      if (error) {
+        console.error("[Webhook PUTUS] DB Error:", error.message);
+        await sendTelegramMessage(chatId, "❌ Gagal memutus koneksi.");
+      } else {
+        await sendTelegramMessage(chatId, "✅ <b>Koneksi Diputus.</b>\n\nAnda tidak akan menerima notifikasi Telegram lagi.");
+      }
       return NextResponse.json({ ok: true });
     }
 
