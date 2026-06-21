@@ -322,11 +322,16 @@ export function AIChatPanel() {
               <Send className="w-4 h-4 ml-0.5" />
             </Button>
           </form>
-          {mode !== 'pro' && (
-            <p className="text-[10px] text-center text-slate-400 mt-2 font-medium">
-              Free plan: Maksimal 10 pertanyaan per hari
+          <div className="flex flex-col items-center gap-1 mt-2">
+            {mode !== 'pro' && (
+              <p className="text-[10px] text-slate-400 font-medium">
+                Free plan: Maksimal 10 pertanyaan per hari
+              </p>
+            )}
+            <p className="text-[10px] text-slate-400 text-center px-4">
+              Tiva adalah AI dan dapat membuat kesalahan. Harap periksa kembali informasi penting atau instruksi teknis sebelum diterapkan di lapangan.
             </p>
-          )}
+          </div>
         </div>
       </div>
     </>
