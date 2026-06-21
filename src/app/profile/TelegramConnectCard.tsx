@@ -12,7 +12,7 @@ interface TelegramConnectCardProps {
 
 export function TelegramConnectCard({ userId, telegramChatId }: TelegramConnectCardProps) {
   const [copied, setCopied] = useState(false);
-  const botUsername = "AgritivaBot"; // Replace with your actual bot username if different
+  const botUsername = "agrismart89_bot"; // Using the actual registered bot username
   const connectCommand = `/SAMBUNG ${userId}`;
 
   const handleCopy = () => {
