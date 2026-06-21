@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Ambil konteks tanaman pengguna
-    let plants: any[] = [];
+    let plants: Record<string, unknown>[] = [];
     if (user) {
       const { data, error } = await supabase
         .from('plants')
@@ -104,9 +104,10 @@ export async function POST(req: Request) {
     const plantsContext =
       plants && plants.length > 0
         ? `Pengguna saat ini memiliki ${plants.length} tanaman:\n${plants
-            .map((p: any) => {
-              const rem = p.plant_reminders && p.plant_reminders.length > 0
-                ? 'Jadwal Perawatan: ' + p.plant_reminders.map((r: any) => `${r.activity_type} tiap ${r.frequency_days} hari jam ${String(r.notification_hour).padStart(2, '0')}:${String(r.notification_minute || 0).padStart(2, '0')} WIB`).join(', ')
+            .map((p: Record<string, unknown>) => {
+              const reminders = p.plant_reminders as Record<string, unknown>[] | undefined;
+              const rem = reminders && reminders.length > 0
+                ? 'Jadwal Perawatan: ' + reminders.map((r: Record<string, unknown>) => `${r.activity_type} tiap ${r.frequency_days} hari jam ${String(r.notification_hour).padStart(2, '0')}:${String(r.notification_minute || 0).padStart(2, '0')} WIB`).join(', ')
                 : 'Belum ada jadwal perawatan diatur.';
               return `- ${p.name} (Spesies: ${p.species || 'Tidak diketahui'}, Status: ${p.status || '-'}) -> ${rem}`;
             })
