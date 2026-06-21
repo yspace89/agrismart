@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 import { recordMaterialUsage } from "@/lib/actions";
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
@@ -79,7 +85,7 @@ export async function POST(req: Request) {
       }
 
       // Periksa apakah user ada
-      const { data: profile } = await supabase
+      const { data: profile } = await supabaseAdmin
         .from("profiles")
         .select("id, full_name")
         .eq("id", userId)
@@ -91,7 +97,7 @@ export async function POST(req: Request) {
       }
 
       // Update telegram_chat_id
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from("profiles")
         .update({ telegram_chat_id: String(chatId) })
         .eq("id", userId);
@@ -110,7 +116,7 @@ export async function POST(req: Request) {
 
     // --- 1B. PUTUS COMMAND ---
     if (parts[0].toUpperCase() === "/PUTUS") {
-      const { data: profile } = await supabase
+      const { data: profile } = await supabaseAdmin
         .from("profiles")
         .select("id, full_name")
         .eq("telegram_chat_id", String(chatId))
@@ -121,7 +127,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from("profiles")
         .update({ telegram_chat_id: null })
         .eq("id", profile.id);
@@ -151,14 +157,14 @@ export async function POST(req: Request) {
       }
       const description = parts.slice(3).join(" ");
 
-      const { data: season } = await supabase
+      const { data: season } = await supabaseAdmin
         .from("planting_seasons")
         .select("id, crop_name")
         .eq("status", "ongoing")
         .limit(1)
         .maybeSingle();
 
-      const { error } = await supabase.from("expenses").insert({
+      const { error } = await supabaseAdmin.from("expenses").insert({
         season_id: season?.id,
         category,
         amount,
@@ -201,7 +207,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      const { data: land } = await supabase
+      const { data: land } = await supabaseAdmin
         .from("lands")
         .select("id, name")
         .ilike("name", `%${landName}%`)
@@ -236,7 +242,7 @@ export async function POST(req: Request) {
 
     // --- 4. STOK COMMAND ---
     if (command === "STOK") {
-      const { data: items, error } = await supabase
+      const { data: items, error } = await supabaseAdmin
         .from("inventory")
         .select("*")
         .order("item_name");
@@ -281,7 +287,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      const { data: season } = await supabase
+      const { data: season } = await supabaseAdmin
         .from("planting_seasons")
         .select("id, crop_name")
         .eq("status", "ongoing")
@@ -293,7 +299,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      const { error } = await supabase.from("growth_logs").insert({
+      const { error } = await supabaseAdmin.from("growth_logs").insert({
         season_id: season.id,
         height_cm: heightCm,
         condition_score: conditionScore,
@@ -324,7 +330,7 @@ export async function POST(req: Request) {
 
     // --- 6. LAHAN COMMAND ---
     if (command === "LAHAN") {
-      const { data: lands } = await supabase
+      const { data: lands } = await supabaseAdmin
         .from("lands")
         .select("*, planting_seasons(crop_name, status, budget_total)")
         .eq("status", "active");
