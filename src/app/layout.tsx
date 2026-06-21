@@ -20,6 +20,7 @@ import { BottomBar } from "@/components/dashboard/BottomBar";
 import { TopBar } from "@/components/dashboard/TopBar";
 import { AIChatPanel } from "@/components/dashboard/AIChatPanel";
 import { MainContentWrapper } from "@/components/dashboard/MainContentWrapper";
+import NextTopLoader from 'nextjs-toploader';
 
 export default function RootLayout({
   children,
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={`${inter.className} bg-slate-50 text-slate-800`}>
+        <NextTopLoader color="#10b981" showSpinner={false} />
         <UserModeProvider>
           <div className="flex h-screen overflow-hidden bg-slate-50">
             <Sidebar />

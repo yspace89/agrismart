@@ -71,6 +71,13 @@ export function TopBar() {
 
           <Popover>
             <PopoverTrigger className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+              {userProfile.isLoading ? (
+                <div className="hidden md:block w-24 h-4 bg-slate-200 rounded animate-pulse" />
+              ) : (
+                <span className="hidden md:block text-sm font-semibold text-slate-700">
+                  {userProfile.name}
+                </span>
+              )}
               <div className="w-8 h-8 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center overflow-hidden">
                 <User className="w-4 h-4 text-slate-400" />
               </div>
