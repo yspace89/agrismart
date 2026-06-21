@@ -154,9 +154,22 @@ export function AIChatPanel() {
     }
   };
 
+  const formatForWhatsApp = (text: string) => {
+    let waText = text;
+    // Ubah **bold** menjadi *bold* (format WA)
+    waText = waText.replace(/\*\*(.*?)\*\*/g, '*$1*');
+    // Ubah header # menjadi *bold*
+    waText = waText.replace(/^###?\s+(.*)$/gm, '*$1*');
+    // Hapus karakter bullet point unicode yang aneh dan ganti dengan strip
+    waText = waText.replace(/^[•·]\s+/gm, '- ');
+    return waText;
+  };
+
   const handleShareWA = (text: string) => {
-    const waUrl = `https://wa.me/?text=${encodeURIComponent(text + '\n\n---\nDibantu oleh Tiva, Asisten AI dari Agritiva. Yuk gabung di agritiva.web.id!')}`;
-    window.open(waUrl, '_blank');
+    const formattedText = formatForWhatsApp(text);
+    // Menggunakan api.whatsapp.com lebih stabil untuk encode emoji di Desktop dibanding wa.me
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(formattedText + '\n\n---\nDibantu oleh Tiva, Asisten AI dari Agritiva. Yuk gabung di agritiva.web.id!')}`;
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
   };
 
   const accentColor = mode === 'pro' ? 'bg-agritiva-green' : 'bg-emerald-500';
