@@ -6,6 +6,21 @@ import { NextResponse } from 'next/server';
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
 
+interface PlantReminder {
+  activity_type: string;
+  frequency_days: number;
+  notification_hour: number;
+  notification_minute?: number;
+}
+
+interface PlantData {
+  id: string;
+  name: string;
+  species?: string;
+  status?: string;
+  plant_reminders?: PlantReminder[];
+}
+
 // SumoPod adalah OpenAI-compatible API, cukup ganti baseURL & apiKey
 const sumopod = createOpenAI({
   apiKey: process.env.SUMOPOD_API_KEY!,
@@ -80,7 +95,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Ambil konteks tanaman pengguna
-    let plants: Record<string, unknown>[] = [];
+    let plants: PlantData[] = [];
     if (user) {
       const { data, error } = await supabase
         .from('plants')
@@ -93,7 +108,7 @@ export async function POST(req: Request) {
         .eq('created_by', user.id);
       
       if (error) console.error("Error fetching plants for AI:", error);
-      plants = data || [];
+      plants = (data as unknown as PlantData[]) || [];
     }
 
     // 5. Parse body — format plain: { messages: [{role, content}] }
@@ -104,10 +119,10 @@ export async function POST(req: Request) {
     const plantsContext =
       plants && plants.length > 0
         ? `Pengguna saat ini memiliki ${plants.length} tanaman:\n${plants
-            .map((p: Record<string, unknown>) => {
-              const reminders = p.plant_reminders as Record<string, unknown>[] | undefined;
+            .map((p: PlantData) => {
+              const reminders = p.plant_reminders;
               const rem = reminders && reminders.length > 0
-                ? 'Jadwal Perawatan: ' + reminders.map((r: Record<string, unknown>) => `${r.activity_type} tiap ${r.frequency_days} hari jam ${String(r.notification_hour).padStart(2, '0')}:${String(r.notification_minute || 0).padStart(2, '0')} WIB`).join(', ')
+                ? 'Jadwal Perawatan: ' + reminders.map((r: PlantReminder) => `${r.activity_type} tiap ${r.frequency_days} hari jam ${String(r.notification_hour).padStart(2, '0')}:${String(r.notification_minute || 0).padStart(2, '0')} WIB`).join(', ')
                 : 'Belum ada jadwal perawatan diatur.';
               return `- ${p.name} (Spesies: ${p.species || 'Tidak diketahui'}, Status: ${p.status || '-'}) -> ${rem}`;
             })
