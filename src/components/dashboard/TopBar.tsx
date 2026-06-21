@@ -8,13 +8,14 @@ import { supabase } from "@/lib/supabase";
 import { ModeSwitcherModal } from "./ModeSwitcherModal";
 import { usePathname } from "next/navigation";
 
+import { logout } from "@/app/login/actions";
+
 export function TopBar() {
   const { mode } = useUserMode();
   const [isModeModalOpen, setIsModeModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<{ email?: string, name?: string }>({});
   const pathname = usePathname();
 
-  if (['/login', '/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
 
   useEffect(() => {
     async function loadUser() {
@@ -36,12 +37,9 @@ export function TopBar() {
     loadUser();
   }, []);
 
-  const handleLogout = async () => {
-    // Memanggil server action via form POST atau fetch API route (sesuai implementasi yg ada)
-    // Untuk simpel kita redirect ke /login yang mana ada form action logout atau panggil auth.signOut
-    await supabase.auth.signOut();
-    window.location.href = '/login';
-  };
+  // handleLogout is removed in favor of form action
+
+  if (['/login', '/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
 
   return (
     <>
@@ -99,13 +97,15 @@ export function TopBar() {
 
                 <div className="h-px bg-slate-100 my-2" />
 
-                <button 
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 rounded-xl hover:bg-red-50 transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Keluar
-                </button>
+                <form action={logout} className="w-full">
+                  <button 
+                    type="submit"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 rounded-xl hover:bg-red-50 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Keluar
+                  </button>
+                </form>
               </div>
             </PopoverContent>
           </Popover>

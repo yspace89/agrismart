@@ -7,8 +7,25 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getDashboardStats, getYieldForecastData } from "@/lib/data";
+import { createClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('user_mode')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.user_mode === 'garden') {
+      redirect('/garden');
+    }
+  }
+
   const [stats, forecastData] = await Promise.all([
     getDashboardStats(),
     getYieldForecastData(),

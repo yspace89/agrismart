@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase-server';
+import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Droplet, ThermometerSun, AlertTriangle, Bug } from 'lucide-react';
 import Link from 'next/link';
@@ -11,6 +12,16 @@ export default async function GardenDashboardPage() {
 
   if (!user) {
     return <div>Unauthorized</div>;
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('user_mode')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.user_mode === 'pro') {
+    redirect('/');
   }
 
   const { data: plants } = await supabase

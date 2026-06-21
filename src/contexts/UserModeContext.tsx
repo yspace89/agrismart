@@ -36,12 +36,30 @@ export function UserModeProvider({ children }: { children: React.ReactNode }) {
             .eq('id', user.id)
             .single();
           
+          let serverMode: UserMode = "pro";
+          
           if (!error && data && data.user_mode) {
-            const serverMode = data.user_mode as UserMode;
-            if (serverMode !== storedMode) {
-              setModeState(serverMode);
-              localStorage.setItem("agri_user_mode", serverMode);
-            }
+            serverMode = data.user_mode as UserMode;
+          } else if (error && error.code === 'PGRST116' && storedMode) {
+            // Profil belum ada di DB (mungkin karena gagal saat register), selamatkan pilihan dari localStorage!
+            serverMode = storedMode;
+            await supabase.from('profiles').upsert({ id: user.id, user_mode: storedMode });
+          } else if (error && error.code === 'PGRST116') {
+            // Profil belum ada dan tidak ada pilihan lokal, buat default "pro"
+            await supabase.from('profiles').upsert({ id: user.id, user_mode: "pro" });
+          }
+
+          if (serverMode !== storedMode) {
+            setModeState(serverMode);
+            localStorage.setItem("agri_user_mode", serverMode);
+          }
+
+          // Force client-side redirect if URL is completely wrong for the mode
+          const currentPath = window.location.pathname;
+          if (serverMode === 'garden' && currentPath === '/') {
+            window.location.href = '/garden';
+          } else if (serverMode === 'pro' && currentPath === '/garden') {
+            window.location.href = '/';
           }
         }
       } catch (e) {
@@ -65,8 +83,7 @@ export function UserModeProvider({ children }: { children: React.ReactNode }) {
       if (user) {
         await supabase
           .from('profiles')
-          .update({ user_mode: newMode })
-          .eq('id', user.id);
+          .upsert({ id: user.id, user_mode: newMode });
       }
     } catch (e) {
       console.error("Failed to update user mode to Supabase", e);

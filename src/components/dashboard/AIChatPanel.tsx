@@ -18,7 +18,6 @@ export function AIChatPanel() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  if (['/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -132,6 +131,8 @@ export function AIChatPanel() {
 
   const accentColor = mode === 'pro' ? 'bg-agritiva-green' : 'bg-emerald-500';
   const accentHover = mode === 'pro' ? 'hover:bg-agritiva-dark' : 'hover:bg-emerald-600';
+
+  if (['/register', '/forgot-password', '/update-password'].some(p => pathname.startsWith(p))) return null;
 
   return (
     <>
