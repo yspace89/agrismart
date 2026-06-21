@@ -79,12 +79,19 @@ export async function POST(req: Request) {
     }
 
     // 4. Ambil konteks tanaman pengguna
-    let plants: { name: string; species?: string; status?: string }[] = [];
+    let plants: any[] = [];
     if (user) {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('plants')
-        .select('name, species, status')
-        .eq('user_id', user.id);
+        .select(`
+          id, name, species, status,
+          plant_reminders (
+            activity_type, frequency_days, notification_hour, notification_minute
+          )
+        `)
+        .eq('created_by', user.id);
+      
+      if (error) console.error("Error fetching plants for AI:", error);
       plants = data || [];
     }
 
@@ -96,9 +103,12 @@ export async function POST(req: Request) {
     const plantsContext =
       plants && plants.length > 0
         ? `Pengguna saat ini memiliki ${plants.length} tanaman:\n${plants
-            .map((p: { name: string; species?: string; status?: string }) =>
-              `- ${p.name} (Spesies: ${p.species || 'Tidak diketahui'}, Status: ${p.status || '-'})`
-            )
+            .map((p: any) => {
+              const rem = p.plant_reminders && p.plant_reminders.length > 0
+                ? 'Jadwal Perawatan: ' + p.plant_reminders.map((r: any) => `${r.activity_type} tiap ${r.frequency_days} hari jam ${String(r.notification_hour).padStart(2, '0')}:${String(r.notification_minute || 0).padStart(2, '0')} WIB`).join(', ')
+                : 'Belum ada jadwal perawatan diatur.';
+              return `- ${p.name} (Spesies: ${p.species || 'Tidak diketahui'}, Status: ${p.status || '-'}) -> ${rem}`;
+            })
             .join('\n')}`
         : user 
             ? 'Pengguna saat ini belum memiliki tanaman di kebunnya.'
