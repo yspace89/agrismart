@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { X, Send, AlertCircle, Copy, Check, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
 import { useUserMode } from '@/contexts/UserModeContext';
 import { usePathname } from 'next/navigation';
 
@@ -40,6 +41,19 @@ export function AIChatPanel() {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
   }, [isOpen]);
+
+  // Hapus riwayat chat jika user logout
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        setMessages([]);
+        setIsOpen(false);
+        setError(null);
+        setStreamingText('');
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
