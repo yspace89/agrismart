@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { X, Send, AlertCircle } from 'lucide-react';
+import { X, Send, AlertCircle, Copy, Check, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useUserMode } from '@/contexts/UserModeContext';
@@ -17,6 +17,7 @@ export function AIChatPanel() {
   const { mode } = useUserMode();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -129,6 +130,21 @@ export function AIChatPanel() {
     }
   };
 
+  const handleCopy = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text:', err);
+    }
+  };
+
+  const handleShareWA = (text: string) => {
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(text + '\n\n---\nDibantu oleh Tiva, Asisten AI dari Agritiva. Yuk gabung di agritiva.web.id!')}`;
+    window.open(waUrl, '_blank');
+  };
+
   const accentColor = mode === 'pro' ? 'bg-agritiva-green' : 'bg-emerald-500';
   const accentHover = mode === 'pro' ? 'hover:bg-agritiva-dark' : 'hover:bg-emerald-600';
 
@@ -219,8 +235,29 @@ export function AIChatPanel() {
                 {msg.role === 'user' ? (
                   <span className="whitespace-pre-wrap">{msg.content}</span>
                 ) : (
-                  <div className="prose prose-sm prose-slate max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-strong:font-bold prose-strong:text-slate-800">
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  <div className="flex flex-col gap-2">
+                    <div className="prose prose-sm prose-slate max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-strong:font-bold prose-strong:text-slate-800">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
+                    {/* Aksi Tambahan untuk Tiva */}
+                    <div className="flex items-center gap-3 mt-1 pt-2 border-t border-slate-100/60">
+                      <button
+                        onClick={() => handleCopy(msg.content, idx)}
+                        className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-emerald-600 transition-colors"
+                      >
+                        {copiedIndex === idx ? (
+                          <><Check className="w-3.5 h-3.5 text-emerald-500" /> Dicopy</>
+                        ) : (
+                          <><Copy className="w-3.5 h-3.5" /> Salin</>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleShareWA(msg.content)}
+                        className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-emerald-600 transition-colors"
+                      >
+                        <Share2 className="w-3.5 h-3.5" /> Bagikan ke WA
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
